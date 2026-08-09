@@ -120,7 +120,7 @@
   .bean svg{width:100%;height:100%;}
   .eyebrow{
     display:inline-flex;align-items:center;gap:10px;
-    font-size:14px;letter-spacing:.06em;color:var(--brass-300);
+    font-size:18px;letter-spacing:.06em;color:var(--brass-300);
     margin-bottom:28px;position:relative;z-index:2;
   }
   .eyebrow span.dot{width:5px;height:5px;border-radius:50%;background:var(--brass-500);}
@@ -1128,7 +1128,7 @@ function applySiteContent() {
   const phone       = sel('phone');
   const address     = sel('address');
 
-  if (heroTitle)   heroTitle.textContent   = c.heroTitle;
+  if (heroTitle && c.heroTitle)   heroTitle.textContent   = c.heroTitle;
   if (heroTagline) heroTagline.textContent = c.heroTagline;
   if (heroDesc)    heroDesc.textContent    = c.heroDesc;
   if (aboutTitle)  aboutTitle.textContent  = c.aboutTitle;
