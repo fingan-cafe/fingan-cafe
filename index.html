@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فنجان | كافيه</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --espresso-950:#170F0A;
+    --espresso-900:#221509;
+    --espresso-800:#2E1C10;
+    --roast-700:#3F2818;
+    --roast-600:#4C3220;
+    --brass-500:#B8863C;
+    --brass-300:#DCB876;
+    --brass-100:#F0DFB8;
+    --cardamom-500:#8A9A63;
+    --cardamom-300:#B7C596;
+    --cream-100:#F4E9D6;
+    --cream-200:#EADFC5;
+    --cream-muted:#C9BCA2;
+    --danger:#C24E3A;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--espresso-950);
+    color:var(--cream-100);
+    font-family:'Tajawal',sans-serif;
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Aref Ruqaa',serif;
+    font-weight:700;
+    color:var(--cream-100);
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  button{font-family:inherit;cursor:pointer;}
+  .container{max-width:1140px;margin:0 auto;padding:0 32px;}
+  ::selection{background:var(--brass-500);color:var(--espresso-950);}
+
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:1;
+    opacity:.05;mix-blend-mode:overlay;
+    background-image:radial-gradient(circle at 20% 30%, #fff 0.5px, transparent 0.5px),
+                      radial-gradient(circle at 70% 65%, #fff 0.5px, transparent 0.5px);
+    background-size:3px 3px, 5px 5px;
+  }
+
+  [data-reveal]{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease;}
+  [data-reveal].in-view{opacity:1;transform:translateY(0);}
+
+  /* NAV */
+  header{
+    position:fixed;top:0;right:0;left:0;z-index:40;
+    padding:22px 0;
+    transition:background .4s ease, padding .4s ease, border-color .4s ease, box-shadow .4s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(23,15,10,0.92);
+    backdrop-filter:blur(10px);
+    padding:14px 0;
+    border-color:rgba(184,134,60,0.25);
+    box-shadow:0 20px 40px -20px rgba(0,0,0,.5);
+  }
+  nav{display:flex;align-items:center;justify-content:space-between;}
+  .logo-mark{display:flex;align-items:center;gap:10px;font-size:22px;}
+  .logo-ring{
+    width:30px;height:30px;border-radius:50%;
+    border:2px solid var(--brass-500);
+    position:relative;flex-shrink:0;
+  }
+  .logo-ring::after{
+    content:"";position:absolute;inset:6px;border-radius:50%;
+    border:1px solid var(--brass-300);opacity:.6;
+  }
+  .nav-links{display:flex;align-items:center;gap:38px;list-style:none;font-size:15px;}
+  .nav-links a{
+    position:relative;padding-bottom:4px;color:var(--cream-200);
+    transition:color .3s ease;
+  }
+  .nav-links a::after{
+    content:"";position:absolute;right:0;bottom:0;width:0;height:1px;
+    background:var(--brass-500);transition:width .3s ease;
+  }
+  .nav-links a:hover{color:var(--brass-300);}
+  .nav-links a:hover::after{width:100%;}
+  .nav-toggle{display:none;background:none;border:none;color:var(--cream-100);font-size:26px;cursor:pointer;}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    text-align:center;
+    padding:120px 24px 80px;
+    background:
+      radial-gradient(ellipse 900px 600px at 50% 20%, rgba(184,134,60,0.10), transparent 60%),
+      linear-gradient(180deg, var(--espresso-950) 0%, var(--espresso-900) 55%, var(--espresso-800) 100%);
+  }
+  .hero-rings{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:min(640px,90vw);height:min(640px,90vw);
+    pointer-events:none;
+  }
+  .hero-rings svg{width:100%;height:100%;opacity:.5;}
+  .bean{position:absolute;pointer-events:none;}
+  .bean svg{width:100%;height:100%;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:14px;letter-spacing:.06em;color:var(--brass-300);
+    margin-bottom:28px;position:relative;z-index:2;
+  }
+  .eyebrow span.dot{width:5px;height:5px;border-radius:50%;background:var(--brass-500);}
+  .hero h1{
+    font-size:clamp(64px,13vw,148px);
+    line-height:1;
+    position:relative;z-index:2;
+    background:linear-gradient(180deg, var(--cream-100), var(--brass-300) 120%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-tagline{
+    font-family:'Aref Ruqaa',serif;
+    font-size:clamp(22px,3vw,32px);
+    color:var(--cardamom-300);
+    margin-top:18px;position:relative;z-index:2;
+  }
+  .hero-sub{
+    max-width:520px;margin:26px auto 0;
+    color:var(--cream-muted);font-size:16px;
+    position:relative;z-index:2;
+  }
+  .hero-cta{
+    margin-top:44px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;
+    position:relative;z-index:2;
+  }
+  .btn{
+    display:inline-block;padding:15px 34px;border-radius:2px;
+    font-size:15px;font-weight:500;letter-spacing:.02em;
+    transition:transform .3s ease, background .3s ease, border-color .3s ease, box-shadow .3s ease;
+    border:1px solid var(--brass-500);background:none;color:var(--cream-100);
+  }
+  .btn-fill{background:var(--brass-500);color:var(--espresso-950);}
+  .btn-fill:hover{background:var(--brass-300);border-color:var(--brass-300);transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(184,134,60,.45);}
+  .btn-ghost{color:var(--cream-100);}
+  .btn-ghost:hover{background:rgba(184,134,60,0.12);border-color:var(--brass-300);transform:translateY(-2px);}
+  .btn-sm{padding:9px 18px;font-size:13px;}
+
+  .scroll-cue{
+    position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    font-size:12px;color:var(--cream-muted);letter-spacing:.08em;
+    animation:bob 2.4s ease-in-out infinite;
+  }
+  .scroll-cue .line{width:1px;height:34px;background:linear-gradient(180deg,var(--brass-500),transparent);}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,8px);}}
+
+  .ring-divider{display:flex;align-items:center;justify-content:center;gap:18px;padding:70px 0;}
+  .ring-divider .line{flex:1;max-width:180px;height:1px;background:linear-gradient(90deg,transparent,var(--roast-700));}
+  .ring-divider .line.rev{background:linear-gradient(90deg,var(--roast-700),transparent);}
+  .ring-divider .ring{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--brass-500);position:relative;}
+  .ring-divider .ring::after{content:"";position:absolute;inset:8px;border-radius:50%;border:1px solid var(--cardamom-500);opacity:.7;}
+
+  /* STORY */
+  .story{padding:20px 0 90px;}
+  .story-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:70px;align-items:center;}
+  .story-label{font-size:13px;letter-spacing:.1em;color:var(--brass-300);margin-bottom:18px;}
+  .story h2{font-size:clamp(34px,4vw,48px);line-height:1.25;margin-bottom:24px;}
+  .story p{color:var(--cream-muted);font-size:16px;margin-bottom:16px;max-width:46ch;}
+  .story-visual{
+    aspect-ratio:1/1.05;border-radius:4px;
+    background:radial-gradient(circle at 50% 42%, rgba(184,134,60,.18), transparent 60%),
+      linear-gradient(155deg, var(--roast-700), var(--espresso-800));
+    border:1px solid rgba(184,134,60,.25);
+    box-shadow:0 40px 80px -30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.03);
+    display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  }
+  .story-visual svg{width:62%;opacity:.9;}
+  .steam{position:absolute;top:8%;left:50%;transform:translateX(-50%);width:70px;height:120px;opacity:.35;}
+  .stat-row{display:flex;gap:44px;margin-top:36px;flex-wrap:wrap;}
+  .stat b{display:block;font-family:'Aref Ruqaa',serif;font-size:30px;color:var(--brass-300);}
+  .stat span{font-size:13px;color:var(--cream-muted);}
+
+  /* MENU */
+  .menu{padding:20px 0 100px;}
+  .menu-head{text-align:center;margin-bottom:50px;}
+  .menu-head .story-label{margin:0 auto 16px;}
+  .menu-head h2{font-size:clamp(38px,5vw,56px);}
+
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:56px;border-bottom:1px solid var(--roast-700);padding-bottom:2px;}
+  .tab{background:none;border:none;color:var(--cream-muted);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:500;padding:12px 22px;position:relative;transition:color .3s ease;}
+  .tab::after{content:"";position:absolute;bottom:-2px;left:50%;width:0;height:2px;background:var(--brass-500);transition:all .35s ease;transform:translateX(50%);}
+  .tab.active{color:var(--cream-100);}
+  .tab.active::after{width:60%;}
+  .tab:hover{color:var(--brass-300);}
+
+  .menu-panel{display:none;}
+  .menu-panel.active{display:block;animation:fadeUp .5s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .menu-intro{text-align:center;color:var(--cardamom-300);font-family:'Aref Ruqaa',serif;font-size:20px;margin-bottom:36px;}
+
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
+  .item{
+    display:flex;align-items:center;gap:16px;padding:14px;
+    background:linear-gradient(160deg, rgba(184,134,60,0.05), rgba(184,134,60,0.015));
+    border:1px solid rgba(184,134,60,0.14);border-radius:8px;
+    transition:border-color .35s ease, background .35s ease, transform .35s ease;
+  }
+  .item:hover{border-color:rgba(184,134,60,0.45);background:linear-gradient(160deg, rgba(184,134,60,0.09), rgba(184,134,60,0.02));transform:translateY(-2px);}
+  .item-img{
+    width:60px;height:60px;border-radius:50%;flex-shrink:0;overflow:hidden;
+    border:1px solid rgba(184,134,60,.35);background:var(--roast-700);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .item-img img{width:100%;height:100%;object-fit:cover;}
+  .item-img svg{width:50%;height:50%;opacity:.55;}
+  .item-body{flex:1;min-width:0;}
+  .item-name{font-size:16.5px;font-weight:500;color:var(--cream-100);}
+  .item-desc{font-size:13px;color:var(--cream-muted);margin-top:4px;}
+  .item-price{font-family:'Aref Ruqaa',serif;font-size:19px;color:var(--brass-300);white-space:nowrap;flex-shrink:0;}
+
+  /* CTA */
+  .cta-band{
+    background:linear-gradient(155deg, var(--roast-700), var(--espresso-800));
+    border-top:1px solid rgba(184,134,60,.2);border-bottom:1px solid rgba(184,134,60,.2);
+    padding:80px 0;text-align:center;
+  }
+  .cta-band h2{font-size:clamp(30px,4vw,44px);margin-bottom:14px;}
+  .cta-band p{color:var(--cream-muted);margin-bottom:32px;}
+
+  footer{padding:70px 0 34px;}
+  .footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:50px;margin-bottom:60px;}
+  .footer-brand .logo-mark{font-size:26px;margin-bottom:16px;}
+  .footer-brand p{color:var(--cream-muted);font-size:14px;max-width:34ch;}
+  footer h4{font-family:'Tajawal',sans-serif;font-size:14px;color:var(--brass-300);letter-spacing:.06em;margin-bottom:18px;font-weight:700;}
+  footer ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  footer ul a, footer p.info{color:var(--cream-muted);font-size:14.5px;}
+  footer ul a:hover{color:var(--cream-100);}
+  .footer-bottom{border-top:1px solid var(--roast-700);padding-top:26px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--cream-muted);}
+  .socials{display:flex;gap:16px;}
+
+  /* ADMIN */
+  .admin-fab{
+    position:fixed;bottom:22px;left:22px;z-index:60;
+    width:44px;height:44px;border-radius:50%;
+    background:rgba(23,15,10,0.85);border:1px solid rgba(184,134,60,.35);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--brass-300);opacity:.55;transition:opacity .3s ease, transform .3s ease;
+  }
+  .admin-fab:hover{opacity:1;transform:scale(1.06);}
+  .admin-fab svg{width:20px;height:20px;}
+
+  .modal-overlay{
+    position:fixed;inset:0;z-index:100;background:rgba(10,6,4,0.75);
+    display:none;align-items:center;justify-content:center;padding:24px;
+    backdrop-filter:blur(3px);
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--espresso-900);border:1px solid rgba(184,134,60,.25);
+    border-radius:10px;padding:32px;max-width:420px;width:100%;
+    box-shadow:0 40px 80px -20px rgba(0,0,0,.7);
+  }
+  .modal h3{font-size:22px;margin-bottom:8px;}
+  .modal p.hint{font-size:13px;color:var(--cream-muted);margin-bottom:20px;}
+  .modal input[type=password], .field-input{
+    width:100%;padding:12px 14px;background:rgba(255,255,255,.04);
+    border:1px solid rgba(184,134,60,.3);border-radius:6px;
+    color:var(--cream-100);font-family:'Tajawal',sans-serif;font-size:14px;
+    margin-bottom:14px;outline:none;transition:border-color .25s ease;
+  }
+  .modal input[type=password]:focus, .field-input:focus{border-color:var(--brass-300);}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+  .modal-close{position:absolute;top:16px;left:16px;background:none;border:none;color:var(--cream-muted);font-size:20px;}
+  .modal.wide{max-width:760px;position:relative;max-height:85vh;overflow-y:auto;}
+  .err-msg{color:#E29586;font-size:13px;margin:-8px 0 14px;display:none;}
+
+  .admin-cat-select{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+  .admin-cat-select button{
+    background:rgba(184,134,60,.08);border:1px solid rgba(184,134,60,.25);
+    color:var(--cream-muted);padding:8px 16px;border-radius:20px;font-size:13px;
+    transition:all .25s ease;
+  }
+  .admin-cat-select button.active{background:var(--brass-500);color:var(--espresso-950);border-color:var(--brass-500);font-weight:500;}
+
+  .admin-row{
+    display:flex;gap:14px;align-items:flex-start;padding:16px;
+    background:rgba(255,255,255,.02);border:1px solid rgba(184,134,60,.15);
+    border-radius:8px;margin-bottom:12px;
+  }
+  .admin-thumb{
+    width:64px;height:64px;border-radius:8px;flex-shrink:0;overflow:hidden;
+    background:var(--roast-700);border:1px solid rgba(184,134,60,.3);
+    display:flex;align-items:center;justify-content:center;position:relative;
+  }
+  .admin-thumb img{width:100%;height:100%;object-fit:cover;}
+  .admin-thumb svg{width:46%;height:46%;opacity:.5;}
+  .admin-thumb-input{display:none;}
+  .admin-thumb-label{position:absolute;inset:0;cursor:pointer;}
+  .admin-fields{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .admin-fields .field-input{margin-bottom:0;font-size:13px;padding:9px 10px;}
+  .admin-fields .field-input.name{grid-column:1/3;font-size:14px;}
+  .admin-fields .field-input.desc{grid-column:1/3;}
+  .admin-row-actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+  .icon-btn{
+    background:none;border:1px solid rgba(184,134,60,.25);color:var(--cream-muted);
+    width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+    transition:all .2s ease;
+  }
+  .icon-btn:hover{border-color:var(--brass-300);color:var(--brass-300);}
+  .icon-btn.danger:hover{border-color:var(--danger);color:var(--danger);}
+  .icon-btn svg{width:15px;height:15px;}
+
+  .admin-bar{position:sticky;bottom:-32px;background:var(--espresso-900);padding:16px 0 0;margin-top:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .save-status{font-size:13px;color:var(--cardamom-300);opacity:0;transition:opacity .3s ease;}
+  .save-status.show{opacity:1;}
+  .admin-note{font-size:12px;color:var(--cream-muted);background:rgba(184,134,60,.08);border:1px solid rgba(184,134,60,.2);border-radius:6px;padding:10px 12px;margin-bottom:18px;}
+
+  @media(max-width:860px){
+    .nav-links{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--espresso-950);flex-direction:column;justify-content:center;align-items:center;gap:32px;font-size:22px;transform:translateY(-100%);opacity:0;transition:all .4s ease;pointer-events:none;}
+    .nav-links.open{transform:translateY(0);opacity:1;pointer-events:all;}
+    .nav-toggle{display:block;position:relative;z-index:50;}
+    .story-grid{grid-template-columns:1fr;gap:40px;}
+    .story-visual{max-width:320px;margin:0 auto;}
+    .menu-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;gap:36px;}
+    .stat-row{gap:28px;}
+    .admin-fields{grid-template-columns:1fr;}
+    .admin-fields .field-input.name, .admin-fields .field-input.desc{grid-column:1;}
+    .admin-row{flex-direction:column;}
+  }
+
+  /* ── Fade-up animation ─────────────────────── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .menu-item-card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5) !important;
+    border-color: rgba(201,161,121,0.4) !important;
+  }
+  /* ── Menu card circle image ─────────────────── */
+  .menu-item-card {
+    background: linear-gradient(160deg, rgba(184,134,60,0.07), rgba(184,134,60,0.02));
+    border: 1px solid rgba(184,134,60,0.18);
+    border-radius: 16px;
+    padding: 22px 18px;
+    text-align: center;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    cursor: default;
+  }
+  .menu-item-card .card-icon-wrap {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: radial-gradient(circle, #5a3a28, #3b2417);
+    border: 3px solid #c9a179;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px;
+    margin: 0 auto 14px;
+  }
+  .menu-item-card h3 {
+    color: var(--cream-100); font-size: 16px;
+    margin-bottom: 6px; font-family: 'Tajawal', sans-serif; font-weight: 600;
+  }
+  .menu-item-card p {
+    color: var(--cream-muted); font-size: 13px;
+    line-height: 1.6; margin-bottom: 12px;
+  }
+  .menu-item-card .card-price {
+    color: var(--brass-300); font-size: 19px;
+    font-family: 'Aref Ruqaa', serif; font-weight: 700;
+  }
+  /* ── New admin button (bottom-right) ──────────── */
+  #adminBtn:hover { transform: scale(1.1) rotate(30deg) !important; }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header id="siteHeader">
+  <div class="container">
+    <nav>
+      <div class="logo-mark"><span class="logo-ring"></span><span class="display">فنجان</span></div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#top" onclick="closeNav()">الرئيسية</a></li>
+        <li><a href="#story" onclick="closeNav()">حكايتنا</a></li>
+        <li><a href="#menu" onclick="closeNav()">المنيو</a></li>
+        <li><a href="#visit" onclick="closeNav()">زورونا</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="القائمة">☰</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-rings">
+    <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="200" r="196" stroke="#B8863C" stroke-opacity="0.35" stroke-width="1"/>
+      <circle cx="200" cy="200" r="150" stroke="#B8863C" stroke-opacity="0.5" stroke-width="1"/>
+      <circle cx="200" cy="200" r="150" stroke="#8A9A63" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="2 6"/>
+    </svg>
+  </div>
+  <div class="bean" style="width:34px;height:50px;top:16%;right:12%;transform:rotate(-18deg);opacity:.55;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.55"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+  <div class="bean" style="width:22px;height:32px;top:24%;right:8%;transform:rotate(30deg);opacity:.4;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.55"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+  <div class="bean" style="width:30px;height:44px;bottom:20%;left:10%;transform:rotate(50deg);opacity:.5;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.55"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+  <div class="bean" style="width:18px;height:26px;bottom:28%;left:16%;transform:rotate(-10deg);opacity:.4;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.55"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+  <div class="bean" style="width:24px;height:36px;top:60%;right:18%;transform:rotate(80deg);opacity:.35;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#8A9A63" fill-opacity="0.5"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+  <div>
+    <div class="eyebrow"><span class="dot"></span>كافيه فنجان<span class="dot"></span></div>
+    <h1 data-editable="heroTitle">فنجان</h1>
+    <p class="hero-tagline" data-editable="heroTagline">لكل فنجان... حكاية</p>
+    <p class="hero-sub" data-editable="heroDesc">قهوة عربية أصيلة بنكهة الهيل، وإسبريسو مُحمّص بعناية، في مكان صُمّم ليكون امتدادًا لجلسة الأصدقاء الطويلة.</p>
+    <div class="hero-cta">
+      <a href="#menu" class="btn btn-fill">تصفّح المنيو</a>
+      <a href="#visit" class="btn btn-ghost">موقعنا وساعات العمل</a>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>انزل لتكتشف</span><span class="line"></span></div>
+</section>
+
+<div class="container"><div class="ring-divider"><span class="line"></span><span class="ring"></span><span class="line rev"></span></div></div>
+
+<section class="story" id="story">
+  <div class="container">
+    <div class="story-grid">
+      <div class="story-visual" data-reveal>
+        <svg class="steam" viewBox="0 0 60 100" fill="none">
+          <path d="M15 90C15 90 5 75 15 60C25 45 15 30 15 15" stroke="#EADFC5" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
+          <path d="M45 90C45 90 35 75 45 60C55 45 45 30 45 15" stroke="#EADFC5" stroke-opacity="0.35" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg viewBox="0 0 220 220" fill="none">
+          <ellipse cx="110" cy="168" rx="88" ry="14" stroke="#B8863C" stroke-width="3" fill="none"/>
+          <path d="M46 100 h115 v28 a57.5 57.5 0 0 1 -57.5 57.5 h-0 a57.5 57.5 0 0 1 -57.5 -57.5 z" stroke="#DCB876" stroke-width="3.5" fill="#2E1C10"/>
+          <path d="M161 112 q34 0 34 26 q0 26 -34 26" stroke="#DCB876" stroke-width="3.5" fill="none"/>
+          <ellipse cx="103.5" cy="100" rx="57.5" ry="11" stroke="#B8863C" stroke-width="3.5" fill="#3F2818"/>
+        </svg>
+        <div class="bean" style="width:26px;height:38px;bottom:14%;right:16%;transform:rotate(-25deg);opacity:.65;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.6"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="bean" style="width:18px;height:26px;bottom:10%;right:28%;transform:rotate(15deg);opacity:.55;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.6"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="bean" style="width:20px;height:30px;bottom:16%;left:20%;transform:rotate(60deg);opacity:.5;"><svg viewBox="0 0 40 60" fill="none"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#8A9A63" fill-opacity="0.55"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg></div>
+      </div>
+      <div data-reveal>
+        <div class="story-label">حكايتنا</div>
+        <h2 data-editable="aboutTitle">بدأنا من فنجان واحد،<br>وصار مكانًا يجمع الكل</h2>
+        <p data-editable="aboutP1">افتُتح فنجان بفكرة بسيطة: أن تُقدَّم القهوة العربية بالطريقة التي تستحقها — بنّ طازج التحميص، هيل حقيقي، ودلة نحاسية تُسكب أمامك لا خلف الكواليس.</p>
+        <p data-editable="aboutP2">مع الوقت، أضفنا إسبريسو مختص ومشروبات باردة وحلويات بيتية، لكن جوهر المكان لم يتغيّر: فنجان يُشرب ببطء، في صحبة حديث لا ينتهي.</p>
+        <div class="stat-row">
+          <div class="stat"><b data-editable="stat1Num">+٢٠</b><span data-editable="stat1Label">صنف في المنيو</span></div>
+          <div class="stat"><b data-editable="stat2Num">يومياً</b><span data-editable="stat2Label">تحميص طازج</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container"><div class="ring-divider"><span class="line"></span><span class="ring"></span><span class="line rev"></span></div></div>
+
+<section class="menu" id="menu">
+  <div class="container">
+    <div class="menu-head" data-reveal>
+      <div class="story-label">المنيو</div>
+      <h2>
+        <svg viewBox="0 0 40 60" fill="none" style="width:16px;height:24px;display:inline-block;vertical-align:middle;margin-left:10px;transform:rotate(-20deg);"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.6"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg>
+        اختر فنجانك
+        <svg viewBox="0 0 40 60" fill="none" style="width:16px;height:24px;display:inline-block;vertical-align:middle;margin-right:10px;transform:rotate(20deg);"><path d="M20 2C9 2 2 15 2 30C2 45 9 58 20 58C31 58 38 45 38 30C38 15 31 2 20 2Z" fill="#B8863C" fill-opacity="0.6"/><path d="M20 6C14 14 14 46 20 54" stroke="#170F0A" stroke-width="2" stroke-linecap="round"/></svg>
+      </h2>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="arabic">قهوة عربية وتركية</button>
+      <button class="tab" data-tab="espresso">إسبريسو ومشروبات ساخنة</button>
+      <button class="tab" data-tab="cold">مشروبات باردة</button>
+      <button class="tab" data-tab="tea">شاي وأعشاب</button>
+      <button class="tab" data-tab="sweets">حلويات ومخبوزات</button>
+    </div>
+
+    <div id="menuPanels"></div>
+  </div>
+</section>
+
+<section class="cta-band" id="visit">
+  <div class="container">
+    <h2>فنجانك في انتظارك</h2>
+    <p data-editable="workHours">يومياً من ١٠ صباحاً حتى ١ صباحاً</p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-mark"><span class="logo-ring"></span><span class="display">فنجان</span></div>
+        <p>كافيه يجمع بين أصالة القهوة العربية وروح الإسبريسو الحديث، في قلب الإسكندرية.</p>
+      </div>
+      <div>
+        <h4>ساعات العمل</h4>
+        <p class="info" data-editable="workHours">يومياً من ١٠ صباحاً حتى ١ صباحاً</p>
+      </div>
+      <div>
+        <h4>معلومات الاتصال</h4>
+        <ul>
+          <li><a href="#" data-editable="phone">٠١٠٠ ٠٠٠ ٠٠٠٠</a></li>
+          <li><span data-editable="address">الرياض، حي النخيل</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© ٢٠٢٦ فنجان. جميع الحقوق محفوظة</span>
+      <div class="socials"><a href="#">إنستجرام</a><a href="#">فيسبوك</a><a href="#">تيك توك</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════
+     Admin Button (bottom-right, new style)
+══════════════════════════════════════════════════════ -->
+<button id="adminBtn" style="
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, #c9a179, #d4a843);
+  border: none; font-size: 20px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  transition: transform 0.2s;
+" title="لوحة الإدارة">⚙</button>
+
+<!-- Password Modal (new) -->
+<div id="passwordModal" style="display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center;">
+  <div style="background:#1e1008; border:1px solid #c9a179; border-radius:20px;
+    padding:40px; width:340px; text-align:center; font-family:Tajawal,Tahoma,sans-serif;">
+    <div style="font-size:48px; margin-bottom:12px;">☕</div>
+    <h2 style="color:#c9a179; margin-bottom:8px;">لوحة الإدارة</h2>
+    <p style="color:#9e8070; font-size:14px; margin-bottom:24px;">أدخل كلمة المرور للمتابعة</p>
+    <input id="passwordInput" type="password" placeholder="كلمة المرور"
+      style="width:100%; padding:12px 16px; border-radius:10px; border:1px solid #c9a179;
+      background:#2a1508; color:#fff; font-size:16px; font-family:inherit;
+      text-align:center; outline:none; margin-bottom:12px;"
+    >
+    <div id="passwordError" style="color:#e74c3c; font-size:13px; margin-bottom:12px; display:none;">
+      ❌ كلمة المرور غلط
+    </div>
+    <button id="loginBtn" style="width:100%; padding:13px; border-radius:10px;
+      background:linear-gradient(135deg,#c9a179,#d4a843); border:none;
+      color:#1a0e08; font-size:16px; font-weight:700; font-family:inherit;
+      cursor:pointer;">دخول</button>
+    <button id="cancelLoginBtn" style="width:100%; padding:10px; margin-top:10px;
+      border-radius:10px; background:transparent; border:1px solid #555;
+      color:#999; font-size:14px; font-family:inherit; cursor:pointer;">إلغاء</button>
+  </div>
+</div>
+
+<!-- Admin Panel (new, full) -->
+<div id="adminPanel" style="display:none; position:fixed; inset:0; z-index:10001;
+  background:rgba(0,0,0,0.85); backdrop-filter:blur(10px);
+  font-family:Tajawal,Tahoma,sans-serif; overflow-y:auto; padding:20px;">
+
+  <div style="max-width:900px; margin:0 auto;">
+    <!-- Header -->
+    <div style="display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:28px; padding:20px 24px;
+      background:#1e1008; border-radius:16px; border:1px solid #c9a179;">
+      <div>
+        <h2 style="color:#c9a179; margin:0;">⚙ لوحة تحكم فنجان</h2>
+        <p style="color:#9e8070; font-size:13px; margin:4px 0 0;">إدارة المنيو والمحتوى</p>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <button id="savePublishBtn" style="padding:10px 24px; border-radius:10px;
+          background:linear-gradient(135deg,#c9a179,#d4a843); border:none;
+          color:#1a0e08; font-weight:700; font-size:14px; font-family:inherit;
+          cursor:pointer;">💾 حفظ ونشر</button>
+        <button id="closeAdminBtn" style="padding:10px 20px; border-radius:10px;
+          background:#3b2417; border:1px solid #555; color:#ccc;
+          font-size:14px; font-family:inherit; cursor:pointer;">✕ إغلاق</button>
+      </div>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div style="display:flex; gap:8px; margin-bottom:20px;">
+      <button id="tabMenu" onclick="switchAdminTab('menu')" style="padding:10px 24px; border-radius:10px;
+        background:linear-gradient(135deg,#c9a179,#d4a843); border:none;
+        color:#1a0e08; font-weight:700; font-family:inherit; cursor:pointer;">☕ المنيو</button>
+      <button id="tabContent" onclick="switchAdminTab('content')" style="padding:10px 24px; border-radius:10px;
+        background:#2a1508; border:1px solid #555; color:#ccc;
+        font-family:inherit; cursor:pointer;">✏️ محتوى الصفحة</button>
+    </div>
+
+    <!-- Tab: Menu -->
+    <div id="menuTabSection">
+    <!-- Items List -->
+    <div id="adminItemsList"></div>
+
+    <!-- Add New Item -->
+    <div style="background:#1e1008; border:2px dashed #c9a179; border-radius:16px;
+      padding:24px; margin-top:20px; text-align:center;">
+      <h3 style="color:#c9a179; margin-bottom:16px;">+ إضافة صنف جديد</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+        <input id="newItemName" placeholder="اسم الصنف" style="padding:10px; border-radius:8px;
+          border:1px solid #c9a179; background:#2a1508; color:#fff; font-family:inherit; font-size:14px;">
+        <input id="newItemPrice" placeholder="السعر (مثال: ٢٥ ج.م)" style="padding:10px; border-radius:8px;
+          border:1px solid #c9a179; background:#2a1508; color:#fff; font-family:inherit; font-size:14px;">
+        <input id="newItemDesc" placeholder="الوصف" style="padding:10px; border-radius:8px;
+          border:1px solid #c9a179; background:#2a1508; color:#fff; font-family:inherit; font-size:14px;">
+        <select id="newItemCat" style="padding:10px; border-radius:8px;
+          border:1px solid #c9a179; background:#2a1508; color:#fff; font-family:inherit; font-size:14px;">
+          <option value="arabic">قهوة عربية وتركية</option>
+          <option value="espresso">إسبريسو ومشروبات ساخنة</option>
+          <option value="cold">مشروبات باردة</option>
+          <option value="tea">شاي وأعشاب</option>
+          <option value="sweets">حلويات ومخبوزات</option>
+        </select>
+      </div>
+      <button id="addNewItemBtn" style="padding:11px 32px; border-radius:10px;
+        background:linear-gradient(135deg,#c9a179,#d4a843); border:none;
+        color:#1a0e08; font-weight:700; font-size:14px; font-family:inherit;
+        cursor:pointer;">+ إضافة الصنف</button>
+    </div>
+    </div><!-- end menuTabSection -->
+
+    <!-- Tab: Site Content -->
+    <div id="contentTabSection" style="display:none;">
+      <div style="background:#1e1008; border:1px solid rgba(201,161,121,0.3); border-radius:16px; padding:28px;">
+        <h3 style="color:#c9a179; margin-bottom:22px; font-size:17px;">✏️ تعديل محتوى الصفحة</h3>
+        <div style="display:grid; gap:16px;">
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">اسم الكافيه (Hero Title)</label>
+            <input id="edit_heroTitle" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">الشعار / Tagline</label>
+            <input id="edit_heroTagline" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">وصف الكافيه (Hero Description)</label>
+            <textarea id="edit_heroDesc" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:14px;resize:vertical;"></textarea>
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">عنوان قسم «حكايتنا»</label>
+            <input id="edit_aboutTitle" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">الفقرة الأولى — حكايتنا</label>
+            <textarea id="edit_aboutP1" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:14px;resize:vertical;"></textarea>
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">الفقرة الثانية — حكايتنا</label>
+            <textarea id="edit_aboutP2" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:14px;resize:vertical;"></textarea>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">رقم الإحصائية الأولى</label>
+              <input id="edit_stat1Num" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+            </div>
+            <div>
+              <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">تسمية الإحصائية الأولى</label>
+              <input id="edit_stat1Label" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+            </div>
+            <div>
+              <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">رقم الإحصائية الثانية</label>
+              <input id="edit_stat2Num" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+            </div>
+            <div>
+              <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">تسمية الإحصائية الثانية</label>
+              <input id="edit_stat2Label" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+            </div>
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">أوقات العمل</label>
+            <input id="edit_workHours" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">رقم التليفون</label>
+            <input id="edit_phone" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;" dir="ltr">
+          </div>
+
+          <div>
+            <label style="color:#c9a179; font-size:13px; display:block; margin-bottom:6px;">العنوان</label>
+            <input id="edit_address" style="width:100%;padding:10px;border-radius:8px;border:1px solid #555;background:#2a1508;color:#fff;font-family:inherit;font-size:15px;">
+          </div>
+
+        </div>
+      </div>
+    </div><!-- end contentTabSection -->
+
+    <!-- Success Message -->
+    <div id="saveSuccess" style="display:none; background:#1b4332; border:1px solid #2e7d52;
+      border-radius:12px; padding:16px; margin-top:16px; text-align:center;
+      color:#4caf7d; font-size:15px;">
+      ✅ تم الحفظ والنشر بنجاح! التعديلات ظاهرة الآن للزوار.
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal-overlay" id="adminOverlay">
+  <div class="modal wide">
+    <button class="modal-close" onclick="closeAdmin()" aria-label="إغلاق">✕</button>
+    <h3>لوحة إدارة المنيو</h3>
+    <p class="admin-note">ارفعوا صورة لكل صنف، وعدّلوا الاسم أو السعر أو الوصف مباشرة. أي تغيير يظهر لكل زوار الموقع فور الضغط على "حفظ ونشر".</p>
+    <div class="admin-cat-select" id="adminCatSelect"></div>
+    <div id="adminList"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addItem()" style="margin-top:6px;">+ إضافة صنف جديد</button>
+    <div class="admin-bar">
+      <span class="save-status" id="saveStatus">تم الحفظ والنشر ✓</span>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost btn-sm" onclick="logoutAdmin()">تسجيل الخروج</button>
+        <button class="btn btn-fill btn-sm" onclick="saveMenu()">حفظ ونشر</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---------- change this password to whatever you like ---------- */
+  const ADMIN_PASSWORD = "fingan@2026";
+  /* ------------------------------------------------------------------ */
+
+  const CATEGORIES = [
+    {id:'arabic', label:'قهوة عربية وتركية', intro:'تُقدَّم بالدلة النحاسية التقليدية'},
+    {id:'espresso', label:'إسبريسو ومشروبات ساخنة', intro:'بنّ مُحمَّص طازج كل صباح'},
+    {id:'cold', label:'مشروبات باردة', intro:'منعشة ومثالية لأيام الإسكندرية الدافئة'},
+    {id:'tea', label:'شاي وأعشاب', intro:'أعشاب طبيعية مغليّة طازجة'},
+    {id:'sweets', label:'حلويات ومخبوزات', intro:'حلويات بيتية تُحضَّر يوميًا'}
+  ];
+
+  const DEFAULT_MENU = {
+    arabic:[
+      {id:'a1',name:'قهوة عربية بالهيل',desc:'قهوة عربية أصيلة منقوعة بالهيل الأخضر',price:'٣٥ ج.م',image:''},
+      {id:'a2',name:'قهوة تركية سادة',desc:'تُحضَّر على الرمل، بدون سكر',price:'٣٠ ج.م',image:''},
+      {id:'a3',name:'قهوة تركية مظبوط',desc:'درجة سكر متوسطة',price:'٣٠ ج.م',image:''},
+      {id:'a4',name:'قهوة تركية سكر زيادة',desc:'لمحبي الطعم الحلو',price:'٣٠ ج.م',image:''}
+    ],
+    espresso:[
+      {id:'e1',name:'إسبريسو',desc:'جرعة مركّزة، قوام كريمي',price:'٣٠ ج.م',image:''},
+      {id:'e2',name:'أمريكانو',desc:'إسبريسو ممدود بالماء الساخن',price:'٣٥ ج.م',image:''},
+      {id:'e3',name:'لاتيه',desc:'حليب مبخّر ورغوة ناعمة',price:'٤٥ ج.م',image:''},
+      {id:'e4',name:'كابتشينو',desc:'توازن بين الإسبريسو والرغوة',price:'٤٥ ج.م',image:''},
+      {id:'e5',name:'فلات وايت',desc:'حليب أقل، تركيز أعلى',price:'٤٨ ج.م',image:''},
+      {id:'e6',name:'موكا',desc:'إسبريسو مع شوكولاتة داكنة',price:'٥٠ ج.م',image:''}
+    ],
+    cold:[
+      {id:'c1',name:'آيس لاتيه',desc:'قهوة وحليب بارد على الثلج',price:'٥٠ ج.م',image:''},
+      {id:'c2',name:'كولد برو',desc:'تخمير بارد لـ١٢ ساعة',price:'٥٥ ج.م',image:''},
+      {id:'c3',name:'فرابيه بالكراميل',desc:'مخفوق بارد وطبقة كراميل',price:'٥٨ ج.م',image:''},
+      {id:'c4',name:'آيس أمريكانو',desc:'إسبريسو وماء بارد وثلج',price:'٤٢ ج.م',image:''}
+    ],
+    tea:[
+      {id:'t1',name:'شاي أحمر',desc:'شاي سيلاني كلاسيكي',price:'٢٠ ج.م',image:''},
+      {id:'t2',name:'نعناع أخضر',desc:'شاي أخضر بأوراق نعناع طازجة',price:'٢٢ ج.م',image:''},
+      {id:'t3',name:'كركديه',desc:'يُقدَّم ساخنًا أو باردًا',price:'٢٥ ج.م',image:''},
+      {id:'t4',name:'يانسون',desc:'مهدّئ وخفيف على المعدة',price:'٢٢ ج.م',image:''}
+    ],
+    sweets:[
+      {id:'s1',name:'كنافة بالقشطة',desc:'تُقدَّم دافئة مع القطر',price:'٦٠ ج.م',image:''},
+      {id:'s2',name:'بسبوسة',desc:'وصفة تقليدية بالقشطة',price:'٤٥ ج.م',image:''},
+      {id:'s3',name:'تشيز كيك',desc:'قوام كريمي بقاعدة بسكويت',price:'٦٥ ج.م',image:''},
+      {id:'s4',name:'كوكيز الشوكولاتة',desc:'مخبوزة طازجة، قلب طري',price:'٤٠ ج.م',image:''}
+    ]
+  };
+
+  let menuData = JSON.parse(JSON.stringify(DEFAULT_MENU));
+  let isAdmin = false;
+  let adminActiveCat = 'arabic';
+
+  const cupIcon = '<svg viewBox="0 0 60 60" fill="none"><path d="M14 24h28v9a14 14 0 0 1-14 14 14 14 0 0 1-14-14z" stroke="#DCB876" stroke-width="2.4"/><path d="M42 26q9 0 9 7t-9 7" stroke="#DCB876" stroke-width="2.4"/></svg>';
+
+  function renderMenu(){
+    const wrap = document.getElementById('menuPanels');
+    wrap.innerHTML = CATEGORIES.map((cat,i) => `
+      <div class="menu-panel${i===0?' active':''}" data-panel="${cat.id}">
+        <p class="menu-intro">${cat.intro}</p>
+        <div class="menu-grid">
+          ${(menuData[cat.id]||[]).map(item => `
+            <div class="item">
+              <div class="item-img">${item.image ? `<img src="${item.image}" alt="${item.name}">` : cupIcon}</div>
+              <div class="item-body">
+                <div class="item-name">${item.name||'صنف بدون اسم'}</div>
+                <div class="item-desc">${item.desc||''}</div>
+              </div>
+              <div class="item-price">${item.price||''}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function switchTab(catId){
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === catId));
+    document.querySelectorAll('.menu-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === catId));
+  }
+  document.getElementById('tabs').addEventListener('click', e => {
+    const btn = e.target.closest('.tab');
+    if(btn) switchTab(btn.dataset.tab);
+  });
+
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 40));
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  function closeNav(){ navLinks.classList.remove('open'); }
+
+  const revealEls = () => document.querySelectorAll('[data-reveal]');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
+  }, {threshold:.15});
+  revealEls().forEach(el => io.observe(el));
+
+  /* ---------- ADMIN LOGIN ---------- */
+  const loginOverlay = document.getElementById('loginOverlay');
+  const adminOverlay = document.getElementById('adminOverlay');
+  document.getElementById('adminFab').addEventListener('click', () => {
+    if(isAdmin){ openAdmin(); } else { loginOverlay.classList.add('open'); document.getElementById('pwInput').focus(); }
+  });
+  function closeLogin(){ loginOverlay.classList.remove('open'); document.getElementById('pwInput').value=''; document.getElementById('pwErr').style.display='none'; }
+  function tryLogin(){
+    const val = document.getElementById('pwInput').value;
+    if(val === ADMIN_PASSWORD){ isAdmin = true; closeLogin(); openAdmin(); }
+    else { document.getElementById('pwErr').style.display='block'; }
+  }
+  document.getElementById('pwInput').addEventListener('keydown', e => { if(e.key === 'Enter') tryLogin(); });
+  function logoutAdmin(){ isAdmin = false; closeAdmin(); }
+  function closeAdmin(){ adminOverlay.classList.remove('open'); }
+
+  function openAdmin(){
+    renderAdminCats();
+    renderAdminList();
+    adminOverlay.classList.add('open');
+  }
+  function renderAdminCats(){
+    document.getElementById('adminCatSelect').innerHTML = CATEGORIES.map(c =>
+      `<button class="${c.id===adminActiveCat?'active':''}" onclick="setAdminCat('${c.id}')">${c.label}</button>`
+    ).join('');
+  }
+  function setAdminCat(id){ adminActiveCat = id; renderAdminCats(); renderAdminList(); }
+
+  const placeholderThumb = '<svg viewBox="0 0 60 60" fill="none"><path d="M14 24h28v9a14 14 0 0 1-14 14 14 14 0 0 1-14-14z" stroke="#DCB876" stroke-width="2.4"/><path d="M42 26q9 0 9 7t-9 7" stroke="#DCB876" stroke-width="2.4"/></svg>';
+
+  function renderAdminList(){
+    const items = menuData[adminActiveCat] || [];
+    document.getElementById('adminList').innerHTML = items.map((item, idx) => `
+      <div class="admin-row">
+        <div class="admin-thumb">
+          ${item.image ? `<img src="${item.image}">` : placeholderThumb}
+          <label class="admin-thumb-label">
+            <input type="file" accept="image/*" class="admin-thumb-input" onchange="uploadImage(event, ${idx})">
+          </label>
+        </div>
+        <div class="admin-fields">
+          <input class="field-input name" value="${escapeAttr(item.name)}" placeholder="اسم الصنف" oninput="updateField(${idx},'name',this.value)">
+          <input class="field-input" value="${escapeAttr(item.price)}" placeholder="السعر (مثال: ٣٥ ج.م)" oninput="updateField(${idx},'price',this.value)">
+          <input class="field-input desc" value="${escapeAttr(item.desc)}" placeholder="وصف قصير" oninput="updateField(${idx},'desc',this.value)">
+        </div>
+        <div class="admin-row-actions">
+          <button class="icon-btn danger" title="حذف الصنف" onclick="deleteItem(${idx})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
+          </button>
+        </div>
+      </div>
+    `).join('') || '<p style="color:var(--cream-muted);font-size:14px;">لا توجد أصناف في هذا القسم بعد.</p>';
+  }
+
+  function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
+
+  function updateField(idx, field, value){
+    menuData[adminActiveCat][idx][field] = value;
+    renderMenu();
+  }
+  function deleteItem(idx){
+    menuData[adminActiveCat].splice(idx,1);
+    renderAdminList();
+    renderMenu();
+  }
+  function addItem(){
+    menuData[adminActiveCat].push({id:'item-'+Date.now(), name:'', desc:'', price:'', image:''});
+    renderAdminList();
+    renderMenu();
+  }
+
+  function uploadImage(evt, idx){
+    const file = evt.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 480;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = h*(maxDim/w); w = maxDim; }
+        else if(h > maxDim){ w = w*(maxDim/h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#2E1C10'; ctx.fillRect(0,0,w,h);
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
+        menuData[adminActiveCat][idx].image = dataUrl;
+        renderAdminList();
+        renderMenu();
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function saveMenu(){
+    const statusEl = document.getElementById('saveStatus');
+    try{
+      await window.storage.set('finjan-menu', JSON.stringify(menuData), true);
+      statusEl.textContent = 'تم الحفظ والنشر ✓';
+      statusEl.classList.add('show');
+      setTimeout(() => statusEl.classList.remove('show'), 2500);
+    }catch(err){
+      statusEl.textContent = 'حدث خطأ أثناء الحفظ، حاول مرة أخرى';
+      statusEl.style.color = '#E29586';
+      statusEl.classList.add('show');
+      console.error('save error', err);
+    }
+  }
+
+  async function loadMenu(){
+    renderMenu();
+    try{
+      const res = await window.storage.get('finjan-menu', true);
+      if(res && res.value){
+        const parsed = JSON.parse(res.value);
+        CATEGORIES.forEach(c => { if(!parsed[c.id]) parsed[c.id] = []; });
+        menuData = parsed;
+        renderMenu();
+      }
+    }catch(err){
+      console.log('no saved menu yet, showing defaults');
+    }
+  }
+  loadMenu();
+</script>
+
+<!-- ══════════════════════════════════════════════════════
+     New Features: Fade-up + Admin Button + New Admin Panel
+══════════════════════════════════════════════════════ -->
+<script>
+// ══ Site Content Editable ══════════════════════════════
+
+const SITE_DEFAULTS = {
+  heroTitle:     'فنجان',
+  heroTagline:   'لكل فنجان... حكاية',
+  heroDesc:      'قهوة عربية أصيلة بنكهة الهيل، وإسبريسو محضص بعناية، في مكان صُمِّم ليكون امتداداً لجلسة الأصدقاء الطويلة.',
+  aboutTitle:    'بدأنا من فنجان واحد، وصار مكاناً يجمع الكل',
+  aboutP1:       'افتُح فنجان بفكرة بسيطة: أن نُقدِّم القهوة العربية بالطريقة التي تستحقها – بُن طازج التحميص، هيل حقيقي، ودلة نحاسية تُسكب أمامك لا خلف الكواليس.',
+  aboutP2:       'مع الوقت، أضفنا إسبريسو محترف ومشروبات باردة وحلويات بيتية، لكن جوهر المكان لم يتغير: فنجان يُشرب بصحة، في صحبة لا بنتهي.',
+  stat1Num:      '+٢٠',
+  stat1Label:    'صنف في المنيو',
+  stat2Num:      'يومياً',
+  stat2Label:    'تحميص طازج',
+  workHours:     'يومياً من ١٠ صباحاً حتى ١ صباحاً',
+  phone:         '٠١٠٠ ٠٠٠ ٠٠٠٠',
+  address:       'الرياض، حي النخيل'
+};
+
+function getSiteContent() {
+  const saved = localStorage.getItem('finjanSiteContent');
+  return saved ? { ...SITE_DEFAULTS, ...JSON.parse(saved) } : { ...SITE_DEFAULTS };
+}
+
+function saveSiteContent(data) {
+  localStorage.setItem('finjanSiteContent', JSON.stringify(data));
+}
+
+function applySiteContent() {
+  const c = getSiteContent();
+  const sel = a => document.querySelector('[data-editable="' + a + '"]');
+  const heroTitle   = sel('heroTitle');
+  const heroTagline = sel('heroTagline');
+  const heroDesc    = sel('heroDesc');
+  const aboutTitle  = sel('aboutTitle');
+  const aboutP1     = sel('aboutP1');
+  const aboutP2     = sel('aboutP2');
+  const stat1Num    = sel('stat1Num');
+  const stat1Label  = sel('stat1Label');
+  const stat2Num    = sel('stat2Num');
+  const stat2Label  = sel('stat2Label');
+  const workHoursEls = document.querySelectorAll('[data-editable="workHours"]');
+  const phone       = sel('phone');
+  const address     = sel('address');
+
+  if (heroTitle)   heroTitle.textContent   = c.heroTitle;
+  if (heroTagline) heroTagline.textContent = c.heroTagline;
+  if (heroDesc)    heroDesc.textContent    = c.heroDesc;
+  if (aboutTitle)  aboutTitle.textContent  = c.aboutTitle;
+  if (aboutP1)     aboutP1.textContent     = c.aboutP1;
+  if (aboutP2)     aboutP2.textContent     = c.aboutP2;
+  if (stat1Num)    stat1Num.textContent    = c.stat1Num;
+  if (stat1Label)  stat1Label.textContent  = c.stat1Label;
+  if (stat2Num)    stat2Num.textContent    = c.stat2Num;
+  if (stat2Label)  stat2Label.textContent  = c.stat2Label;
+  workHoursEls.forEach(el => { el.textContent = c.workHours; });
+  if (phone)       phone.textContent       = c.phone;
+  if (address)     address.textContent     = c.address;
+}
+
+// ── Admin Tab Switcher ─────────────────────────────────
+function switchAdminTab(tab) {
+  const menuSec    = document.getElementById('menuTabSection');
+  const contentSec = document.getElementById('contentTabSection');
+  const btnMenu    = document.getElementById('tabMenu');
+  const btnContent = document.getElementById('tabContent');
+  const activeStyle   = 'padding:10px 24px;border-radius:10px;background:linear-gradient(135deg,#c9a179,#d4a843);border:none;color:#1a0e08;font-weight:700;font-family:inherit;cursor:pointer;';
+  const inactiveStyle = 'padding:10px 24px;border-radius:10px;background:#2a1508;border:1px solid #555;color:#ccc;font-family:inherit;cursor:pointer;';
+  if (tab === 'menu') {
+    menuSec.style.display    = 'block';
+    contentSec.style.display = 'none';
+    btnMenu.style.cssText    = activeStyle;
+    btnContent.style.cssText = inactiveStyle;
+  } else {
+    menuSec.style.display    = 'none';
+    contentSec.style.display = 'block';
+    btnMenu.style.cssText    = inactiveStyle;
+    btnContent.style.cssText = activeStyle;
+    // Populate content fields with current values
+    const c = getSiteContent();
+    document.getElementById('edit_heroTitle').value    = c.heroTitle;
+    document.getElementById('edit_heroTagline').value  = c.heroTagline;
+    document.getElementById('edit_heroDesc').value     = c.heroDesc;
+    document.getElementById('edit_aboutTitle').value   = c.aboutTitle;
+    document.getElementById('edit_aboutP1').value      = c.aboutP1;
+    document.getElementById('edit_aboutP2').value      = c.aboutP2;
+    document.getElementById('edit_stat1Num').value     = c.stat1Num;
+    document.getElementById('edit_stat1Label').value   = c.stat1Label;
+    document.getElementById('edit_stat2Num').value     = c.stat2Num;
+    document.getElementById('edit_stat2Label').value   = c.stat2Label;
+    document.getElementById('edit_workHours').value    = c.workHours;
+    document.getElementById('edit_phone').value        = c.phone;
+    document.getElementById('edit_address').value      = c.address;
+  }
+}
+
+// ── Icon map per category ──────────────────────────────
+const CAT_ICON = {
+  arabic:   '☕',
+  espresso: '☕',
+  cold:     '🧊',
+  tea:      '🍵',
+  sweets:   '🍰'
+};
+
+// ── Render menu as card-grid with fade-up & circle icons ─
+function renderMenuCards() {
+  const wrap = document.getElementById('menuPanels');
+  wrap.innerHTML = CATEGORIES.map((cat, i) => {
+    const items = menuData[cat.id] || [];
+    const icon  = CAT_ICON[cat.id] || '☕';
+    return `
+      <div class="menu-panel${i === 0 ? ' active' : ''}" data-panel="${cat.id}">
+        <p class="menu-intro">${cat.intro}</p>
+        <div data-menu-cat="${cat.id}" style="
+          display:grid;
+          grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+          gap:20px;">
+          ${items.map((item, idx) => {
+            const itemIcon = item.image
+              ? `<img src="${item.image}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+              : (CAT_ICON[cat.id] || icon);
+            return `
+              <div class="menu-item-card fade-up" style="transition-delay:${idx * 80}ms;">
+                <div class="card-icon-wrap">
+                  ${item.image
+                    ? `<img src="${item.image}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+                    : (CAT_ICON[cat.id] || '☕')
+                  }
+                </div>
+                <h3>${item.name || 'صنف بدون اسم'}</h3>
+                <p>${item.desc || ''}</p>
+                <span class="card-price">${item.price || ''}</span>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  // Re-observe all fade-up elements
+  document.querySelectorAll('.fade-up').forEach(el => {
+    el.classList.remove('visible');
+    fadeObserver.observe(el);
+  });
+}
+
+// ── Fade-up Intersection Observer ────────────────────
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // delay is already set via transition-delay in inline style
+      entry.target.classList.add('visible');
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+// ── Admin Button (new, bottom-right) ──────────────────
+const adminBtn2      = document.getElementById('adminBtn');
+const passwordModal  = document.getElementById('passwordModal');
+const passwordInput  = document.getElementById('passwordInput');
+const passwordError  = document.getElementById('passwordError');
+const loginBtn2      = document.getElementById('loginBtn');
+const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+const adminPanel2    = document.getElementById('adminPanel');
+const closeAdminBtn2 = document.getElementById('closeAdminBtn');
+const savePublishBtn = document.getElementById('savePublishBtn');
+const saveSuccess    = document.getElementById('saveSuccess');
+const adminItemsList = document.getElementById('adminItemsList');
+const addNewItemBtn  = document.getElementById('addNewItemBtn');
+
+adminBtn2.addEventListener('click', () => {
+  passwordModal.style.display = 'flex';
+  passwordInput.value = '';
+  passwordError.style.display = 'none';
+  setTimeout(() => passwordInput.focus(), 100);
+});
+cancelLoginBtn.addEventListener('click', () => { passwordModal.style.display = 'none'; });
+passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') loginBtn2.click(); });
+
+loginBtn2.addEventListener('click', () => {
+  if (passwordInput.value === ADMIN_PASSWORD) {
+    passwordModal.style.display = 'none';
+    openNewAdminPanel();
+  } else {
+    passwordError.style.display = 'block';
+    passwordInput.value = '';
+    passwordInput.focus();
+  }
+});
+
+closeAdminBtn2.addEventListener('click', () => {
+  adminPanel2.style.display = 'none';
+  document.body.style.overflow = '';
+});
+
+// ── Open new Admin Panel ─────────────────────────────
+function openNewAdminPanel() {
+  adminPanel2.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  renderNewAdminItems();
+}
+
+// ── Render items in new admin panel ──────────────────
+function renderNewAdminItems() {
+  const catNames = {
+    arabic:   'قهوة عربية وتركية',
+    espresso: 'إسبريسو ومشروبات ساخنة',
+    cold:     'مشروبات باردة',
+    tea:      'شاي وأعشاب',
+    sweets:   'حلويات ومخبوزات'
+  };
+  adminItemsList.innerHTML = '';
+
+  CATEGORIES.forEach(cat => {
+    const items = menuData[cat.id] || [];
+    if (items.length === 0) return;
+
+    const heading = document.createElement('h4');
+    heading.textContent = '── ' + cat.label;
+    heading.style.cssText = 'color:#c9a179;margin:18px 0 10px;font-size:15px;';
+    adminItemsList.appendChild(heading);
+
+    items.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.style.cssText = `background:#1e1008; border:1px solid rgba(201,161,121,0.2);
+        border-radius:14px; padding:16px 20px; margin-bottom:12px;
+        display:grid; grid-template-columns:60px 1fr 1fr 1fr auto; gap:12px; align-items:center;`;
+      // escape helper
+      const esc = s => (s||'').replace(/"/g,'&quot;');
+      card.innerHTML = `
+        <div style="width:56px;height:56px;border-radius:50%;
+          background:radial-gradient(circle,#5a3a28,#3b2417);
+          border:2px solid #c9a179; display:flex; align-items:center;
+          justify-content:center; font-size:24px;">${CAT_ICON[cat.id] || '☕'}</div>
+        <div>
+          <input value="${esc(item.name)}" data-cat="${cat.id}" data-idx="${idx}" data-field="name"
+            style="width:100%;padding:8px;border-radius:8px;border:1px solid #555;
+            background:#2a1508;color:#fff;font-family:inherit;font-size:14px;margin-bottom:6px;">
+          <input value="${esc(item.desc)}" data-cat="${cat.id}" data-idx="${idx}" data-field="desc"
+            style="width:100%;padding:8px;border-radius:8px;border:1px solid #555;
+            background:#2a1508;color:#aaa;font-family:inherit;font-size:13px;">
+        </div>
+        <div>
+          <label style="color:#9e8070;font-size:12px;display:block;margin-bottom:4px;">السعر</label>
+          <input value="${esc(item.price)}" data-cat="${cat.id}" data-idx="${idx}" data-field="price"
+            style="width:100%;padding:8px;border-radius:8px;border:1px solid #555;
+            background:#2a1508;color:#d4a843;font-family:inherit;font-size:14px;font-weight:700;">
+        </div>
+        <div>
+          <label style="color:#9e8070;font-size:12px;display:block;margin-bottom:4px;">القسم</label>
+          <select data-cat="${cat.id}" data-idx="${idx}" data-field="cat"
+            style="width:100%;padding:8px;border-radius:8px;border:1px solid #555;
+            background:#2a1508;color:#fff;font-family:inherit;font-size:13px;">
+            ${CATEGORIES.map(c => `<option value="${c.id}" ${cat.id===c.id?'selected':''}>${c.label}</option>`).join('')}
+          </select>
+        </div>
+        <button data-delete-cat="${cat.id}" data-delete-idx="${idx}"
+          style="padding:8px 14px;border-radius:8px;background:#3b1010;
+          border:1px solid #b3453a;color:#e57373;font-size:18px;
+          cursor:pointer;" title="حذف">🗑️</button>
+      `;
+      adminItemsList.appendChild(card);
+    });
+  });
+
+  // Bind change events
+  adminItemsList.querySelectorAll('input[data-field], select[data-field]').forEach(el => {
+    el.addEventListener('change', () => {
+      const c = el.dataset.cat, i = +el.dataset.idx, f = el.dataset.field;
+      if (f === 'cat') {
+        // move item to new category
+        const item = menuData[c].splice(i, 1)[0];
+        item.cat = el.value;
+        if (!menuData[el.value]) menuData[el.value] = [];
+        menuData[el.value].push(item);
+      } else {
+        menuData[c][i][f] = el.value;
+      }
+    });
+  });
+
+  // Bind delete events
+  adminItemsList.querySelectorAll('[data-delete-cat]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!confirm('تأكيد حذف الصنف؟')) return;
+      menuData[btn.dataset.deleteCat].splice(+btn.dataset.deleteIdx, 1);
+      renderNewAdminItems();
+    });
+  });
+}
+
+// ── Add New Item ───────────────────────────────────────
+addNewItemBtn.addEventListener('click', () => {
+  const name  = document.getElementById('newItemName').value.trim();
+  const price = document.getElementById('newItemPrice').value.trim();
+  const desc  = document.getElementById('newItemDesc').value.trim();
+  const cat   = document.getElementById('newItemCat').value;
+  if (!name || !price) { alert('أدخل الاسم والسعر على الأقل'); return; }
+  if (!menuData[cat]) menuData[cat] = [];
+  menuData[cat].push({ id: 'ni-' + Date.now(), name, desc, price, image: '' });
+  renderNewAdminItems();
+  document.getElementById('newItemName').value  = '';
+  document.getElementById('newItemPrice').value = '';
+  document.getElementById('newItemDesc').value  = '';
+});
+
+// ── Save & Publish (new panel) ────────────────────────
+savePublishBtn.addEventListener('click', async () => {
+  // Save site content if content tab is active
+  const contentSec = document.getElementById('contentTabSection');
+  if (contentSec && contentSec.style.display !== 'none') {
+    const newContent = {
+      heroTitle:   document.getElementById('edit_heroTitle').value,
+      heroTagline: document.getElementById('edit_heroTagline').value,
+      heroDesc:    document.getElementById('edit_heroDesc').value,
+      aboutTitle:  document.getElementById('edit_aboutTitle').value,
+      aboutP1:     document.getElementById('edit_aboutP1').value,
+      aboutP2:     document.getElementById('edit_aboutP2').value,
+      stat1Num:    document.getElementById('edit_stat1Num').value,
+      stat1Label:  document.getElementById('edit_stat1Label').value,
+      stat2Num:    document.getElementById('edit_stat2Num').value,
+      stat2Label:  document.getElementById('edit_stat2Label').value,
+      workHours:   document.getElementById('edit_workHours').value,
+      phone:       document.getElementById('edit_phone').value,
+      address:     document.getElementById('edit_address').value,
+    };
+    saveSiteContent(newContent);
+    applySiteContent();
+  }
+  // persist menu to localStorage
+  try {
+    await window.storage.set('finjan-menu', JSON.stringify(menuData), true);
+  } catch(e) {
+    localStorage.setItem('finjan-menu', JSON.stringify(menuData));
+  }
+  // Re-render the card menu on the page
+  renderMenuCards();
+  saveSuccess.style.display = 'block';
+  setTimeout(() => { saveSuccess.style.display = 'none'; }, 3000);
+});
+
+// ── Override renderMenu to use card layout ─────────────
+// Wrap the original renderMenu so card layout is used everywhere
+const _origRenderMenu = renderMenu;
+window.renderMenu = function() {
+  renderMenuCards();
+};
+
+// ── Init on load ──────────────────────────────────────
+window.addEventListener('load', () => {
+  // Apply saved site content
+  applySiteContent();
+  // renderMenuCards will be called via overridden renderMenu → loadMenu() above
+  // but we call it explicitly to be safe
+  renderMenuCards();
+});
+</script>
+
+
+</body>
+</html>
