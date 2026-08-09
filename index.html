@@ -752,36 +752,86 @@
 
   const DEFAULT_MENU = {
     arabic:[
-      {id:'a1',name:'قهوة عربية بالهيل',desc:'قهوة عربية أصيلة منقوعة بالهيل الأخضر',price:'٣٥ ج.م',image:''},
-      {id:'a2',name:'قهوة تركية سادة',desc:'تُحضَّر على الرمل، بدون سكر',price:'٣٠ ج.م',image:''},
-      {id:'a3',name:'قهوة تركية مظبوط',desc:'درجة سكر متوسطة',price:'٣٠ ج.م',image:''},
-      {id:'a4',name:'قهوة تركية سكر زيادة',desc:'لمحبي الطعم الحلو',price:'٣٠ ج.م',image:''}
+      {id:'a1',name:'قهوة تركي سنجل (سادة)',desc:'',price:'٣٠ ج.م',image:''},
+      {id:'a2',name:'قهوة تركي (مضبوط)',desc:'',price:'٣٠ ج.م',image:''},
+      {id:'a3',name:'قهوة تركي دبل (سادة)',desc:'',price:'٣٥ ج.م',image:''},
+      {id:'a4',name:'قهوة تركي دبل (مضبوط)',desc:'',price:'٤٠ ج.م',image:''},
+      {id:'a5',name:'قهوة بندق',desc:'',price:'٤٠ ج.م',image:''},
+      {id:'a6',name:'قهوة فرنسية',desc:'',price:'٤٥ ج.م',image:''},
+      {id:'a7',name:'قهوة يونانية',desc:'حليب مع جوز الهند والكريمة المخفوقة',price:'٦٠ ج.م',image:''},
+      {id:'a8',name:'قهوة نوتيلا',desc:'ايطالي',price:'٥٠ ج.م',image:''}
     ],
     espresso:[
-      {id:'e1',name:'إسبريسو',desc:'جرعة مركّزة، قوام كريمي',price:'٣٠ ج.م',image:''},
-      {id:'e2',name:'أمريكانو',desc:'إسبريسو ممدود بالماء الساخن',price:'٣٥ ج.م',image:''},
-      {id:'e3',name:'لاتيه',desc:'حليب مبخّر ورغوة ناعمة',price:'٤٥ ج.م',image:''},
-      {id:'e4',name:'كابتشينو',desc:'توازن بين الإسبريسو والرغوة',price:'٤٥ ج.م',image:''},
-      {id:'e5',name:'فلات وايت',desc:'حليب أقل، تركيز أعلى',price:'٤٨ ج.م',image:''},
-      {id:'e6',name:'موكا',desc:'إسبريسو مع شوكولاتة داكنة',price:'٥٠ ج.م',image:''}
+      {id:'e1',name:'اسبريسو (سنجل)',desc:'',price:'٣٥ ج.م',image:''},
+      {id:'e2',name:'اسبريسو (دبل)',desc:'',price:'٤٠ ج.م',image:''},
+      {id:'e3',name:'ميكانو كراميل',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'e4',name:'كابتشينو',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'e5',name:'نسكافيه بلاك',desc:'',price:'٤٥ ج.م',image:''},
+      {id:'e6',name:'نسكافيه بالحليب',desc:'',price:'٥٠ ج.م',image:''},
+      {id:'e7',name:'كورتادو',desc:'',price:'٥٥ ج.م',image:''},
+      {id:'e8',name:'فلات وايت',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'e9',name:'لاتيه',desc:'',price:'٥٠ ج.م',image:''},
+      {id:'e10',name:'موكا',desc:'دارك - وايت - نوتيلا',price:'٥٥ ج.م',image:''},
+      {id:'e11',name:'لاتيه ميكاتو كراميل',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'e12',name:'اسباشن لاتيه',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'e13',name:'اسبريسو بونبو',desc:'اسبريسو - حليب مكثف',price:'٦٠ ج.م',image:''},
+      {id:'e14',name:'سيستيانو',desc:'اسبريسو - حليب - حليب مكثف',price:'٦٥ ج.م',image:''},
+      {id:'e15',name:'لونج بلاك',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'e16',name:'اميركان كوفي',desc:'قهوه مخمرة',price:'٦٠ ج.م',image:''},
+      {id:'e17',name:'هوت شوكولاتة',desc:'',price:'٥٥ ج.م',image:''},
+      {id:'e18',name:'هوت كراميل',desc:'',price:'٥٥ ج.م',image:''},
+      {id:'e19',name:'هوت نوتيلا',desc:'',price:'٥٥ ج.م',image:''},
+      {id:'e20',name:'هوت اوريو',desc:'',price:'٥٥ ج.م',image:''}
     ],
     cold:[
-      {id:'c1',name:'آيس لاتيه',desc:'قهوة وحليب بارد على الثلج',price:'٥٠ ج.م',image:''},
-      {id:'c2',name:'كولد برو',desc:'تخمير بارد لـ١٢ ساعة',price:'٥٥ ج.م',image:''},
-      {id:'c3',name:'فرابيه بالكراميل',desc:'مخفوق بارد وطبقة كراميل',price:'٥٨ ج.م',image:''},
-      {id:'c4',name:'آيس أمريكانو',desc:'إسبريسو وماء بارد وثلج',price:'٤٢ ج.م',image:''}
+      {id:'c1',name:'ايس لاتيه',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'c2',name:'ايس كابتشينو',desc:'',price:'٧٠ ج.م',image:''},
+      {id:'c3',name:'ايس لاتيه ميكاتو كراميل',desc:'',price:'٧٠ ج.م',image:''},
+      {id:'c4',name:'ايس سباشن لاتيه',desc:'',price:'٧٠ ج.م',image:''},
+      {id:'c5',name:'ايس موكا',desc:'دارك - وايت - نوتيلا',price:'٧٠ ج.م',image:''},
+      {id:'c6',name:'ايس لونج بلاك',desc:'',price:'٦٥ ج.م',image:''},
+      {id:'c7',name:'ايس مانشا',desc:'',price:'٦٥ ج.م',image:''},
+      {id:'c8',name:'ايس فرابيه لاتيه',desc:'',price:'٦٥ ج.م',image:''},
+      {id:'c9',name:'ايس فرابيه موكا',desc:'دارك - وايت - نوتيلا',price:'٧٥ ج.م',image:''},
+      {id:'c10',name:'ايس فرابيه كراميل',desc:'',price:'٧٥ ج.م',image:''},
+      {id:'c11',name:'ايس فرابيه ماتشا',desc:'',price:'٧٠ ج.م',image:''},
+      {id:'c12',name:'ايس فرابيه لوتس',desc:'',price:'٧٥ ج.م',image:''},
+      {id:'c13',name:'ايس فرابيه سباشن',desc:'',price:'٧٥ ج.م',image:''},
+      {id:'c14',name:'موهيتو فليفر',desc:'فراولة - بلوبيري - جوج',price:'٦٠ ج.م',image:''},
+      {id:'c15',name:'موهيتو كلاسيك',desc:'',price:'٥٠ ج.م',image:''},
+      {id:'c16',name:'صن شاين',desc:'',price:'٥٠ ج.م',image:''},
+      {id:'c17',name:'صن رايز',desc:'',price:'٥٠ ج.م',image:''},
+      {id:'c18',name:'شيري كولا',desc:'',price:'٥٥ ج.م',image:''},
+      {id:'c19',name:'بلو سكاي',desc:'',price:'٥٠ ج.م',image:''},
+      {id:'c20',name:'هامر هير',desc:'',price:'٩٠ ج.م',image:''},
+      {id:'c21',name:'موخيتو ريدبول',desc:'',price:'٩٠ ج.م',image:''},
+      {id:'c22',name:'ريدبول',desc:'',price:'٦٥ ج.م',image:''},
+      {id:'c23',name:'مونستر',desc:'',price:'٦٠ ج.م',image:''},
+      {id:'c24',name:'فيروز',desc:'',price:'٢٥ ج.م',image:''},
+      {id:'c25',name:'تويست',desc:'',price:'٢٥ ج.م',image:''},
+      {id:'c26',name:'٧ كولا',desc:'',price:'٢٥ ج.م',image:''},
+      {id:'c27',name:'مياه',desc:'',price:'١٠ ج.م',image:''}
     ],
     tea:[
-      {id:'t1',name:'شاي أحمر',desc:'شاي سيلاني كلاسيكي',price:'٢٠ ج.م',image:''},
-      {id:'t2',name:'نعناع أخضر',desc:'شاي أخضر بأوراق نعناع طازجة',price:'٢٢ ج.م',image:''},
-      {id:'t3',name:'كركديه',desc:'يُقدَّم ساخنًا أو باردًا',price:'٢٥ ج.م',image:''},
-      {id:'t4',name:'يانسون',desc:'مهدّئ وخفيف على المعدة',price:'٢٢ ج.م',image:''}
+      {id:'t1',name:'شاي',desc:'',price:'١٥ ج.م',image:''},
+      {id:'t2',name:'شاي اخضر',desc:'',price:'٢٠ ج.م',image:''},
+      {id:'t3',name:'شاي فواكه',desc:'جوج - مانجو - فراولة',price:'٢٥ ج.م',image:''},
+      {id:'t4',name:'الاعشاب',desc:'يانسون - نعناع - كركادية',price:'٢٥ ج.م',image:''},
+      {id:'t5',name:'كوكتيل اعشاب',desc:'',price:'٣٥ ج.م',image:''},
+      {id:'t6',name:'قرفة',desc:'',price:'٢٥ ج.م',image:''},
+      {id:'t7',name:'زنجبيل',desc:'',price:'٢٥ ج.م',image:''},
+      {id:'t8',name:'قرفة بالحليب',desc:'',price:'٣٥ ج.م',image:''},
+      {id:'t9',name:'جنزبيل بالحليب',desc:'',price:'٣٥ ج.م',image:''},
+      {id:'t10',name:'هوت ليمون',desc:'',price:'٢٥ ج.م',image:''},
+      {id:'t11',name:'هوت سيدر',desc:'',price:'٤٠ ج.م',image:''},
+      {id:'t12',name:'هامر هيد',desc:'',price:'٤٠ ج.م',image:''}
     ],
     sweets:[
-      {id:'s1',name:'كنافة بالقشطة',desc:'تُقدَّم دافئة مع القطر',price:'٦٠ ج.م',image:''},
-      {id:'s2',name:'بسبوسة',desc:'وصفة تقليدية بالقشطة',price:'٤٥ ج.م',image:''},
-      {id:'s3',name:'تشيز كيك',desc:'قوام كريمي بقاعدة بسكويت',price:'٦٥ ج.م',image:''},
-      {id:'s4',name:'كوكيز الشوكولاتة',desc:'مخبوزة طازجة، قلب طري',price:'٤٠ ج.م',image:''}
+      {id:'s1',name:'ميني كيك ريد فيلفت',desc:'',price:'٥٥ ج.م',image:''},
+      {id:'s2',name:'تشيز كيك بارد',desc:'',price:'٦٥ ج.م',image:''},
+      {id:'s3',name:'ميني نوتيلا كيك',desc:'',price:'٦٥ ج.م',image:''},
+      {id:'s4',name:'ميني تيراميسو',desc:'',price:'٥٠ ج.م',image:''},
+      {id:'s5',name:'ميني لونس',desc:'',price:'٥٥ ج.م',image:''}
     ]
   };
 
@@ -950,9 +1000,9 @@
   async function loadMenu(){
     renderMenu();
     try{
-      const res = await window.storage.get('finjan-menu', true);
-      if(res && res.value){
-        const parsed = JSON.parse(res.value);
+      const saved = localStorage.getItem('finjan-menu');
+      if(saved){
+        const parsed = JSON.parse(saved);
         CATEGORIES.forEach(c => { if(!parsed[c.id]) parsed[c.id] = []; });
         menuData = parsed;
         renderMenu();
@@ -1298,11 +1348,7 @@ savePublishBtn.addEventListener('click', async () => {
     applySiteContent();
   }
   // persist menu to localStorage
-  try {
-    await window.storage.set('finjan-menu', JSON.stringify(menuData), true);
-  } catch(e) {
-    localStorage.setItem('finjan-menu', JSON.stringify(menuData));
-  }
+  localStorage.setItem('finjan-menu', JSON.stringify(menuData));
   // Re-render the card menu on the page
   renderMenuCards();
   saveSuccess.style.display = 'block';
