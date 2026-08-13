@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head>
 <meta charset="UTF-8">
@@ -1321,23 +1320,40 @@
      New Features: Fade-up + Admin Button + New Admin Panel
 ══════════════════════════════════════════════════════ -->
 <script>
-// ══ Firebase Realtime Database (REST API, no SDK needed) ═══════
-const DB_URL_CANDIDATES = [
-  'https://fingan-706bb-default-rtdb.firebaseio.com',
-  'https://fingan-706bb-default-rtdb.firebasedatabase.app'
-];
-let DB_URL = DB_URL_CANDIDATES[0];
-
-async function findWorkingDatabaseUrl() {
-  for (const base of DB_URL_CANDIDATES) {
-    try {
-      const r = await fetch(base + '/finjan.json', { method: 'GET', cache: 'no-store' });
-      if (r.ok) { DB_URL = base; return base; }
-    } catch (e) {}
-  }
-  return DB_URL;
-}
+// ══ Firebase Realtime Database — CLEAN ═══════════════════
+const DB_URL = 'https://fingan-706bb-default-rtdb.firebaseio.com';
+const DB_PATH = '/finjan.json';
 let dbSyncStatus = 'idle'; // idle | loading | saving | error
+
+async function firebaseGet() {
+  const response = await fetch(DB_URL + DB_PATH, {
+    method: 'GET',
+    cache: 'no-store',
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!response.ok) {
+    const text = await response.text().catch(() => '');
+    throw new Error('Firebase GET ' + response.status + (text ? ' — ' + text : ''));
+  }
+  return response.json();
+}
+
+async function firebasePut(data) {
+  const response = await fetch(DB_URL + DB_PATH, {
+    method: 'PUT',
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) {
+    const text = await response.text().catch(() => '');
+    throw new Error('Firebase PUT ' + response.status + (text ? ' — ' + text : ''));
+  }
+  return true;
+}
 
 // ══ Site Content Editable ══════════════════════════════
 
@@ -1371,34 +1387,43 @@ function saveSiteContent(data) {
 
 // ── Load everything (menu + site content) from Firebase once on startup ──
 async function loadAllData() {
+  dbSyncStatus = 'loading';
+
   try {
-    await findWorkingDatabaseUrl();
-    const res = await fetch(DB_URL + '/finjan.json');
-    if (!res.ok) throw new Error('fetch failed: ' + res.status);
-    const data = await res.json();
+    const data = await firebaseGet();
+
     if (data && data.menu) {
       const parsed = data.menu;
+
       CATEGORIES.forEach(c => {
         if (!Array.isArray(parsed[c.id]) || parsed[c.id].length === 0) {
-          parsed[c.id] = DEFAULT_MENU[c.id] ? JSON.parse(JSON.stringify(DEFAULT_MENU[c.id])) : [];
+          parsed[c.id] = DEFAULT_MENU[c.id]
+            ? JSON.parse(JSON.stringify(DEFAULT_MENU[c.id]))
+            : [];
         }
       });
-      // بن فنجان must always have the photographed price list as the fallback.
+
       if (!Array.isArray(parsed.beans) || parsed.beans.length === 0) {
         parsed.beans = JSON.parse(JSON.stringify(DEFAULT_MENU.beans));
       }
+
       menuData = parsed;
     }
+
     if (data && data.content) {
       currentSiteContent = { ...SITE_DEFAULTS, ...data.content };
     }
+
+    dbSyncStatus = 'idle';
   } catch (err) {
+    dbSyncStatus = 'error';
     console.warn('تعذّر تحميل البيانات من Firebase:', err);
 
-    // Restore the latest local backup if Firebase is temporarily unavailable.
     try {
-      const local = localStorage.getItem('finjan_pending_data') ||
-                    localStorage.getItem('finjan_last_saved_data');
+      const local =
+        localStorage.getItem('finjan_pending_data') ||
+        localStorage.getItem('finjan_last_saved_data');
+
       if (local) {
         const cached = JSON.parse(local);
         if (cached && cached.menu) menuData = cached.menu;
@@ -1406,8 +1431,9 @@ async function loadAllData() {
           currentSiteContent = { ...SITE_DEFAULTS, ...cached.content };
         }
       }
-    } catch (e) {}
+    } catch (_) {}
   }
+
   applySiteContent();
   renderMenuCards();
 }
@@ -1416,92 +1442,30 @@ async function loadAllData() {
 async function saveAllData() {
   const payload = {
     menu: JSON.parse(JSON.stringify(menuData)),
-    content: { ...currentSiteContent }
+    content: JSON.parse(JSON.stringify(currentSiteContent))
   };
 
-  // Keep a local backup before any network operation.
+  // Local safety backup before writing to Firebase.
   try {
     localStorage.setItem('finjan_pending_data', JSON.stringify(payload));
-  } catch (e) {}
+  } catch (_) {}
 
-  const errors = [];
+  dbSyncStatus = 'saving';
 
-  // Use the actual Firebase REST API. PATCH is supported by Realtime Database
-  // and updates only the two application branches under /finjan.
-  for (const base of DB_URL_CANDIDATES) {
-    const url = base + '/finjan.json?print=silent';
+  try {
+    await firebasePut(payload);
 
     try {
-      // First prove that this database endpoint is reachable.
-      const probe = await fetch(base + '/finjan.json?print=silent', {
-        method: 'GET',
-        cache: 'no-store'
-      });
+      localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
+      localStorage.removeItem('finjan_pending_data');
+    } catch (_) {}
 
-      if (!probe.ok) {
-        const t = await probe.text().catch(() => '');
-        errors.push(base + ' GET ' + probe.status + (t ? ': ' + t : ''));
-        continue;
-      }
-
-      const response = await fetch(url, {
-        method: 'PATCH',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload),
-        cache: 'no-store'
-      });
-
-      if (!response.ok) {
-        const t = await response.text().catch(() => '');
-        errors.push(base + ' PATCH ' + response.status + (t ? ': ' + t : ''));
-        continue;
-      }
-
-      DB_URL = base;
-
-      // Verify the exact branches we just published.
-      const verify = await fetch(base + '/finjan.json?print=silent', {
-        method: 'GET',
-        cache: 'no-store'
-      });
-
-      if (!verify.ok) {
-        const t = await verify.text().catch(() => '');
-        errors.push(base + ' VERIFY ' + verify.status + (t ? ': ' + t : ''));
-        continue;
-      }
-
-      const saved = await verify.json();
-
-      const menuOK = JSON.stringify(saved && saved.menu) === JSON.stringify(payload.menu);
-      const contentOK = JSON.stringify(saved && saved.content) === JSON.stringify(payload.content);
-
-      if (!menuOK || !contentOK) {
-        errors.push(base + ' VERIFY_MISMATCH menu=' + menuOK + ' content=' + contentOK);
-        continue;
-      }
-
-      try {
-        localStorage.removeItem('finjan_pending_data');
-        localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
-      } catch (e) {}
-
-      return true;
-    } catch (err) {
-      errors.push(base + ' NETWORK: ' + (err && err.message ? err.message : String(err)));
-    }
+    dbSyncStatus = 'idle';
+    return true;
+  } catch (err) {
+    dbSyncStatus = 'error';
+    throw err;
   }
-
-  // Give the real Firebase error to the admin panel instead of hiding it.
-  throw new Error(
-    'لم يتم الحفظ في Firebase.\n' +
-    errors.join('\n') +
-    '\n\nتأكد أن رابط Realtime Database هو الصحيح وأن قواعد الكتابة تسمح بالمسار /finjan.'
-  );
 }
 
 function applySiteContent() {
@@ -2006,9 +1970,7 @@ savePublishBtn.addEventListener('click', async () => {
 
     saveSuccess.textContent =
       '❌ فشل الحفظ إلى Firebase.\n' +
-      (permissionError
-        ? 'صلاحيات الكتابة مرفوضة.'
-        : (msg || 'خطأ غير معروف.')) +
+      (msg || 'خطأ غير معروف.') +
       '\n\nالتعديلات محفوظة كنسخة احتياطية على هذا الجهاز.';
     saveSuccess.style.background = '#4a1e1e';
     saveSuccess.style.borderColor = '#a33';
@@ -2018,7 +1980,7 @@ savePublishBtn.addEventListener('click', async () => {
   } finally {
     savePublishBtn.disabled = false;
     savePublishBtn.textContent = '💾 حفظ ونشر';
-    setTimeout(() => { saveSuccess.style.display = 'none'; }, 3500);
+    setTimeout(() => { saveSuccess.style.display = 'none'; }, 8000);
   }
 });
 
