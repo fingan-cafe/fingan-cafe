@@ -1962,6 +1962,7 @@ savePublishBtn.addEventListener('click', async () => {
     saveSuccess.style.borderColor = '#2e7d52';
     saveSuccess.style.color = '#4caf7d';
     saveSuccess.style.display = 'block';
+    saveSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (err) {
     console.error('Finjan save error:', err);
     const msg = String(err && err.message ? err.message : err);
@@ -1971,12 +1972,15 @@ savePublishBtn.addEventListener('click', async () => {
     saveSuccess.textContent =
       '❌ فشل الحفظ إلى Firebase.\n' +
       (msg || 'خطأ غير معروف.') +
-      '\n\nالتعديلات محفوظة كنسخة احتياطية على هذا الجهاز.';
+      '\n\nالتعديلات محفوظة كنسخة احتياطية على هذا الجهاز فقط، ولن تظهر للزوار حتى يتم حل المشكلة.' +
+      (permissionError ? '\n\nالسبب على الأرجح: صلاحيات قاعدة بيانات Firebase (Rules) بترفض الكتابة. راجع Firebase Console > Realtime Database > Rules.' : '');
     saveSuccess.style.background = '#4a1e1e';
     saveSuccess.style.borderColor = '#a33';
     saveSuccess.style.color = '#e57373';
     saveSuccess.style.whiteSpace = 'pre-line';
     saveSuccess.style.display = 'block';
+    saveSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    alert(saveSuccess.textContent);
   } finally {
     savePublishBtn.disabled = false;
     savePublishBtn.textContent = '💾 حفظ ونشر';
