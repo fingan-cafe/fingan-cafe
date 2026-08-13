@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head>
 <meta charset="UTF-8">
@@ -1413,56 +1414,94 @@ async function loadAllData() {
 
 // ── Push everything (menu + site content) to Firebase ──
 async function saveAllData() {
-  const payload = { menu: menuData, content: currentSiteContent };
+  const payload = {
+    menu: JSON.parse(JSON.stringify(menuData)),
+    content: { ...currentSiteContent }
+  };
 
-  // Save a local backup first so edits are never lost in this browser.
+  // Keep a local backup before any network operation.
   try {
     localStorage.setItem('finjan_pending_data', JSON.stringify(payload));
   } catch (e) {}
 
-  await findWorkingDatabaseUrl();
-  const url = DB_URL + '/finjan.json';
-  let lastError = null;
+  const errors = [];
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  // Use the actual Firebase REST API. PATCH is supported by Realtime Database
+  // and updates only the two application branches under /finjan.
+  for (const base of DB_URL_CANDIDATES) {
+    const url = base + '/finjan.json?print=silent';
+
     try {
-      const res = await fetch(url, {
-        method: 'PUT',
+      // First prove that this database endpoint is reachable.
+      const probe = await fetch(base + '/finjan.json?print=silent', {
+        method: 'GET',
+        cache: 'no-store'
+      });
+
+      if (!probe.ok) {
+        const t = await probe.text().catch(() => '');
+        errors.push(base + ' GET ' + probe.status + (t ? ': ' + t : ''));
+        continue;
+      }
+
+      const response = await fetch(url, {
+        method: 'PATCH',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(payload),
         cache: 'no-store'
       });
 
-      if (res.ok) {
-        try {
-          localStorage.removeItem('finjan_pending_data');
-          localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
-        } catch (e) {}
-        return;
+      if (!response.ok) {
+        const t = await response.text().catch(() => '');
+        errors.push(base + ' PATCH ' + response.status + (t ? ': ' + t : ''));
+        continue;
       }
 
-      let details = '';
-      try { details = await res.text(); } catch (e) {}
-      lastError = new Error('Firebase save failed: HTTP ' + res.status + (details ? ' — ' + details : ''));
+      DB_URL = base;
+
+      // Verify the exact branches we just published.
+      const verify = await fetch(base + '/finjan.json?print=silent', {
+        method: 'GET',
+        cache: 'no-store'
+      });
+
+      if (!verify.ok) {
+        const t = await verify.text().catch(() => '');
+        errors.push(base + ' VERIFY ' + verify.status + (t ? ': ' + t : ''));
+        continue;
+      }
+
+      const saved = await verify.json();
+
+      const menuOK = JSON.stringify(saved && saved.menu) === JSON.stringify(payload.menu);
+      const contentOK = JSON.stringify(saved && saved.content) === JSON.stringify(payload.content);
+
+      if (!menuOK || !contentOK) {
+        errors.push(base + ' VERIFY_MISMATCH menu=' + menuOK + ' content=' + contentOK);
+        continue;
+      }
+
+      try {
+        localStorage.removeItem('finjan_pending_data');
+        localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
+      } catch (e) {}
+
+      return true;
     } catch (err) {
-      lastError = err;
+      errors.push(base + ' NETWORK: ' + (err && err.message ? err.message : String(err)));
     }
-
-    // Try the other database host if the first one is unreachable.
-    if (attempt === 1) {
-      for (const base of DB_URL_CANDIDATES) {
-        if (base === DB_URL) continue;
-        try {
-          const r = await fetch(base + '/finjan.json', { method: 'GET', cache: 'no-store' });
-          if (r.ok) { DB_URL = base; break; }
-        } catch (e) {}
-      }
-    }
-    if (attempt < 3) await new Promise(r => setTimeout(r, 700));
   }
 
-  throw lastError || new Error('Firebase save failed');
+  // Give the real Firebase error to the admin panel instead of hiding it.
+  throw new Error(
+    'لم يتم الحفظ في Firebase.\n' +
+    errors.join('\n') +
+    '\n\nتأكد أن رابط Realtime Database هو الصحيح وأن قواعد الكتابة تسمح بالمسار /finjan.'
+  );
 }
 
 function applySiteContent() {
@@ -1965,12 +2004,16 @@ savePublishBtn.addEventListener('click', async () => {
     const permissionError =
       /401|403|permission|PERMISSION_DENIED|unauthorized/i.test(msg);
 
-    saveSuccess.textContent = permissionError
-      ? '❌ Firebase رافض الحفظ بسبب صلاحيات الكتابة. التعديلات محفوظة كنسخة احتياطية على هذا الجهاز، لكن نشرها لكل الزوار يحتاج تفعيل صلاحية الكتابة في Firebase.'
-      : '❌ فشل الحفظ إلى Firebase. تم الاحتفاظ بنسخة احتياطية على الجهاز. تأكد من الإنترنت وحاول مرة أخرى.';
+    saveSuccess.textContent =
+      '❌ فشل الحفظ إلى Firebase.\n' +
+      (permissionError
+        ? 'صلاحيات الكتابة مرفوضة.'
+        : (msg || 'خطأ غير معروف.')) +
+      '\n\nالتعديلات محفوظة كنسخة احتياطية على هذا الجهاز.';
     saveSuccess.style.background = '#4a1e1e';
     saveSuccess.style.borderColor = '#a33';
     saveSuccess.style.color = '#e57373';
+    saveSuccess.style.whiteSpace = 'pre-line';
     saveSuccess.style.display = 'block';
   } finally {
     savePublishBtn.disabled = false;
