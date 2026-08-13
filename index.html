@@ -1993,6 +1993,12 @@ window.renderMenu = function() {
   renderMenuCards();
 };
 
+// ── Actually load saved data from Firebase on startup ──
+// (loadAllData() was defined above but never called — that's why
+// saves appeared to succeed yet reverted on refresh: the page always
+// rendered the hardcoded defaults instead of fetching what was saved.)
+loadAllData();
+
 </script>
 
 
