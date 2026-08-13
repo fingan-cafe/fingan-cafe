@@ -1377,7 +1377,20 @@ async function loadAllData() {
       currentSiteContent = { ...SITE_DEFAULTS, ...data.content };
     }
   } catch (err) {
-    console.log('تعذّر تحميل البيانات من Firebase، هيتم عرض القيم الافتراضية', err);
+    console.warn('تعذّر تحميل البيانات من Firebase:', err);
+
+    // Restore the latest local backup if Firebase is temporarily unavailable.
+    try {
+      const local = localStorage.getItem('finjan_pending_data') ||
+                    localStorage.getItem('finjan_last_saved_data');
+      if (local) {
+        const cached = JSON.parse(local);
+        if (cached && cached.menu) menuData = cached.menu;
+        if (cached && cached.content) {
+          currentSiteContent = { ...SITE_DEFAULTS, ...cached.content };
+        }
+      }
+    } catch (e) {}
   }
   applySiteContent();
   renderMenuCards();
@@ -1386,12 +1399,62 @@ async function loadAllData() {
 // ── Push everything (menu + site content) to Firebase ──
 async function saveAllData() {
   const payload = { menu: menuData, content: currentSiteContent };
-  const res = await fetch(DB_URL + '/finjan.json', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) throw new Error('save failed: ' + res.status);
+
+  // Keep a local backup before attempting the network save.
+  try {
+    localStorage.setItem('finjan_pending_data', JSON.stringify(payload));
+  } catch (e) {}
+
+  // Local backup so edits are not lost if Firebase is unavailable.
+  try {
+    localStorage.setItem('finjan_pending_data', JSON.stringify(payload));
+    localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
+  } catch (e) {}
+
+  const url = DB_URL + '/finjan.json';
+  let lastError = null;
+
+  // PATCH updates the database without unnecessarily replacing the root.
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: 'PATCH',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        cache: 'no-store'
+      });
+
+      if (res.ok) {
+        // Verify that Firebase actually accepted the new content.
+        const verify = await fetch(url, { method: 'GET', cache: 'no-store' });
+        if (!verify.ok) throw new Error('save verification failed: HTTP ' + verify.status);
+        const saved = await verify.json();
+        if (JSON.stringify(saved) !== JSON.stringify(payload)) {
+          throw new Error('Firebase returned data different from the saved data');
+        }
+
+        try {
+          localStorage.removeItem('finjan_pending_data');
+          localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
+        } catch (e) {}
+        return;
+      }
+
+      let details = '';
+      try { details = await res.text(); } catch (e) {}
+      lastError = new Error(
+        'Firebase save failed: HTTP ' + res.status +
+        (details ? ' — ' + details : '')
+      );
+    } catch (err) {
+      lastError = err;
+    }
+
+    if (attempt < 2) await new Promise(r => setTimeout(r, 700));
+  }
+
+  throw lastError || new Error('Firebase save failed');
 }
 
 function applySiteContent() {
@@ -1854,6 +1917,9 @@ addNewItemBtn.addEventListener('click', () => {
 
 // ── Save & Publish (new panel) ────────────────────────
 savePublishBtn.addEventListener('click', async () => {
+  const originalText = savePublishBtn.textContent;
+  savePublishBtn.disabled = true;
+  savePublishBtn.textContent = '⏳ جاري الحفظ...';
   // Always capture whatever is currently in the content fields (in case
   // the admin edited them even if that tab isn't the one showing right now)
   const contentSec = document.getElementById('contentTabSection');
@@ -1888,8 +1954,14 @@ savePublishBtn.addEventListener('click', async () => {
     saveSuccess.style.color = '#4caf7d';
     saveSuccess.style.display = 'block';
   } catch (err) {
-    console.error(err);
-    saveSuccess.textContent = '❌ حدث خطأ أثناء الحفظ. تأكد من اتصال الإنترنت وحاول مرة أخرى.';
+    console.error('Finjan save error:', err);
+    const msg = String(err && err.message ? err.message : err);
+    const permissionError =
+      /401|403|permission|PERMISSION_DENIED|unauthorized/i.test(msg);
+
+    saveSuccess.textContent = permissionError
+      ? '❌ Firebase رافض الحفظ بسبب صلاحيات الكتابة. التعديلات محفوظة كنسخة احتياطية على هذا الجهاز، لكن نشرها لكل الزوار يحتاج تفعيل صلاحية الكتابة في Firebase.'
+      : '❌ فشل الحفظ إلى Firebase. تم الاحتفاظ بنسخة احتياطية على الجهاز. تأكد من الإنترنت وحاول مرة أخرى.';
     saveSuccess.style.background = '#4a1e1e';
     saveSuccess.style.borderColor = '#a33';
     saveSuccess.style.color = '#e57373';
