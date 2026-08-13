@@ -646,6 +646,71 @@
   }
 </style>
 
+
+<style id="screen-match-overrides">
+/* ===== HERO / HEADER — matched to supplied reference screenshot ===== */
+@media (min-width:861px){
+  .container{max-width:1220px;padding-left:24px;padding-right:24px;}
+
+  header{padding:16px 0;}
+  header.scrolled{padding:12px 0;}
+  .logo-mark{font-size:24px;gap:10px;}
+  .logo-img{width:46px;height:46px;}
+  .nav-links{gap:48px;font-size:16px;}
+
+  .hero{
+    min-height:100vh;
+    padding:96px 24px 36px;
+    background:
+      radial-gradient(ellipse 900px 620px at 54% 26%, rgba(184,134,60,.075), transparent 62%),
+      linear-gradient(180deg,#1b110c 0%,#21140c 54%,#2b190f 100%);
+  }
+
+  .hero-rings{
+    width:800px;height:800px;
+    left:calc(50% + 64px);
+    top:50%;
+    transform:translate(-50%,calc(-50% + 48px));
+  }
+
+  .hero > div:nth-child(7){
+    transform:translate(64px,40px);
+  }
+
+  .eyebrow{font-size:21px;margin-bottom:28px;gap:11px;}
+  .eyebrow span.dot{width:6px;height:6px;}
+
+  .hero-logo-title{margin:18px 0 8px;}
+  .hero-logo{
+    width:310px;
+    filter:drop-shadow(0 18px 34px rgba(0,0,0,.34));
+  }
+
+  .hero-tagline{
+    font-size:36px;
+    margin-top:18px;
+    color:#b7c596;
+  }
+
+  .hero-sub{
+    max-width:650px;
+    margin:26px auto 0;
+    font-size:17px;
+    line-height:1.9;
+    color:#c9bca2;
+  }
+
+  /* In the reference viewport the first screen ends after the intro text. */
+  .hero-cta,.scroll-cue{display:none !important;}
+}
+
+@media (max-width:860px){
+  .hero-rings{left:50%;transform:translate(-50%,-50%);}
+  .hero > div:nth-child(7){transform:none;}
+  .hero-cta,.scroll-cue{display:flex;}
+}
+</style>
+
 </head>
 <body>
 
@@ -1485,7 +1550,12 @@ function applySiteContent() {
   const phone       = sel('phone');
   const address     = sel('address');
 
-  if (heroTitle && c.heroTitle)   heroTitle.textContent   = c.heroTitle;
+  // The hero title element contains the actual logo image.
+  // Never replace its textContent or the image will disappear when
+  // Firebase/local data finishes loading. Keep the logo DOM intact.
+  if (heroTitle && c.heroTitle) {
+    heroTitle.setAttribute('aria-label', c.heroTitle);
+  }
   if (heroTagline) heroTagline.textContent = c.heroTagline;
   if (heroDesc)    heroDesc.textContent    = c.heroDesc;
   if (aboutTitle)  aboutTitle.textContent  = c.aboutTitle;
