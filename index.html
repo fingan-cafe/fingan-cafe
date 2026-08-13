@@ -1321,7 +1321,21 @@
 ══════════════════════════════════════════════════════ -->
 <script>
 // ══ Firebase Realtime Database (REST API, no SDK needed) ═══════
-const DB_URL = 'https://fingan-706bb-default-rtdb.firebaseio.com';
+const DB_URL_CANDIDATES = [
+  'https://fingan-706bb-default-rtdb.firebaseio.com',
+  'https://fingan-706bb-default-rtdb.firebasedatabase.app'
+];
+let DB_URL = DB_URL_CANDIDATES[0];
+
+async function findWorkingDatabaseUrl() {
+  for (const base of DB_URL_CANDIDATES) {
+    try {
+      const r = await fetch(base + '/finjan.json', { method: 'GET', cache: 'no-store' });
+      if (r.ok) { DB_URL = base; return base; }
+    } catch (e) {}
+  }
+  return DB_URL;
+}
 let dbSyncStatus = 'idle'; // idle | loading | saving | error
 
 // ══ Site Content Editable ══════════════════════════════
@@ -1357,6 +1371,7 @@ function saveSiteContent(data) {
 // ── Load everything (menu + site content) from Firebase once on startup ──
 async function loadAllData() {
   try {
+    await findWorkingDatabaseUrl();
     const res = await fetch(DB_URL + '/finjan.json');
     if (!res.ok) throw new Error('fetch failed: ' + res.status);
     const data = await res.json();
@@ -1400,25 +1415,19 @@ async function loadAllData() {
 async function saveAllData() {
   const payload = { menu: menuData, content: currentSiteContent };
 
-  // Keep a local backup before attempting the network save.
+  // Save a local backup first so edits are never lost in this browser.
   try {
     localStorage.setItem('finjan_pending_data', JSON.stringify(payload));
   } catch (e) {}
 
-  // Local backup so edits are not lost if Firebase is unavailable.
-  try {
-    localStorage.setItem('finjan_pending_data', JSON.stringify(payload));
-    localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
-  } catch (e) {}
-
+  await findWorkingDatabaseUrl();
   const url = DB_URL + '/finjan.json';
   let lastError = null;
 
-  // PATCH updates the database without unnecessarily replacing the root.
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const res = await fetch(url, {
-        method: 'PATCH',
+        method: 'PUT',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -1426,14 +1435,6 @@ async function saveAllData() {
       });
 
       if (res.ok) {
-        // Verify that Firebase actually accepted the new content.
-        const verify = await fetch(url, { method: 'GET', cache: 'no-store' });
-        if (!verify.ok) throw new Error('save verification failed: HTTP ' + verify.status);
-        const saved = await verify.json();
-        if (JSON.stringify(saved) !== JSON.stringify(payload)) {
-          throw new Error('Firebase returned data different from the saved data');
-        }
-
         try {
           localStorage.removeItem('finjan_pending_data');
           localStorage.setItem('finjan_last_saved_data', JSON.stringify(payload));
@@ -1443,15 +1444,22 @@ async function saveAllData() {
 
       let details = '';
       try { details = await res.text(); } catch (e) {}
-      lastError = new Error(
-        'Firebase save failed: HTTP ' + res.status +
-        (details ? ' — ' + details : '')
-      );
+      lastError = new Error('Firebase save failed: HTTP ' + res.status + (details ? ' — ' + details : ''));
     } catch (err) {
       lastError = err;
     }
 
-    if (attempt < 2) await new Promise(r => setTimeout(r, 700));
+    // Try the other database host if the first one is unreachable.
+    if (attempt === 1) {
+      for (const base of DB_URL_CANDIDATES) {
+        if (base === DB_URL) continue;
+        try {
+          const r = await fetch(base + '/finjan.json', { method: 'GET', cache: 'no-store' });
+          if (r.ok) { DB_URL = base; break; }
+        } catch (e) {}
+      }
+    }
+    if (attempt < 3) await new Promise(r => setTimeout(r, 700));
   }
 
   throw lastError || new Error('Firebase save failed');
@@ -1943,8 +1951,6 @@ savePublishBtn.addEventListener('click', async () => {
     applySiteContent();
   }
 
-  savePublishBtn.disabled = true;
-  savePublishBtn.textContent = '⏳ جاري الحفظ...';
   try {
     await saveAllData();
     renderMenuCards();
