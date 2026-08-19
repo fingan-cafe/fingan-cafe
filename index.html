@@ -219,22 +219,17 @@
   .menu-head h2{font-size:clamp(38px,5vw,56px);}
 
   .menu-toolbar{max-width:980px;margin:0 auto 24px;}
-  .menu-hint{
-    text-align:center;color:var(--cream-muted);font-size:14px;
-    margin-bottom:16px;
-  }
+  .menu-hint{display:none !important;}
   .tabs{
-    display:flex;gap:12px;flex-wrap:nowrap;justify-content:flex-start;
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
     margin-bottom:32px;padding:12px;
     border:1px solid rgba(184,134,60,.18);
     border-radius:24px;
     background:rgba(245,239,224,0.92);
     backdrop-filter:blur(10px);
     box-shadow:0 18px 35px -28px rgba(0,0,0,.7);
-    overflow-x:auto;overflow-y:hidden;
-    scrollbar-width:thin;scrollbar-color:rgba(184,134,60,.45) transparent;
+    overflow:visible;
     position:sticky;top:84px;z-index:22;
-    scroll-snap-type:x proximity;
   }
   .tabs::-webkit-scrollbar{height:6px;}
   .tabs::-webkit-scrollbar-thumb{background:rgba(184,134,60,.35);border-radius:999px;}
@@ -393,8 +388,8 @@
     .menu-grid{grid-template-columns:1fr;}
     .menu-toolbar{margin-bottom:18px;}
     .menu-hint{font-size:13px;padding:0 8px;}
-    .tabs{top:72px;padding:10px;border-radius:20px;gap:10px;margin-bottom:24px;}
-    .tab{min-height:44px;padding:10px 16px;font-size:14px;}
+    .tabs{top:72px;padding:10px;border-radius:20px;gap:10px;margin-bottom:24px;grid-template-columns:repeat(2,minmax(0,1fr));}
+    .tab{min-height:44px;padding:10px 12px;font-size:14px;justify-content:center;width:100%;}
     .tab-count{min-width:24px;height:24px;font-size:11px;}
     .footer-grid{grid-template-columns:1fr;gap:36px;}
     .stat-row{gap:28px;}
@@ -535,7 +530,7 @@
       padding:8px;
       border-radius:18px;
       margin-bottom:18px;
-      scroll-padding-inline:12px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
     }
     .tab{min-height:42px;padding:10px 14px;font-size:13px;gap:8px;}
     .tab-count{min-width:22px;height:22px;font-size:10px;padding:0 6px;}
@@ -627,7 +622,7 @@
     .hero-sub{font-size:13px;}
     .btn{width:100%;}
     .stat-row{grid-template-columns:1fr;}
-    .tabs{top:64px;}
+    .tabs{top:64px;grid-template-columns:repeat(2,minmax(0,1fr));}
     .menu-item-card{grid-template-columns:60px 1fr;gap:10px;}
     .menu-item-card .card-icon-wrap{width:60px;height:60px;}
     .menu-item-card h3{grid-column:2;grid-row:1;font-size:15px;}
@@ -1051,7 +1046,7 @@
     </div>
 
     <div class="menu-toolbar" data-reveal="">
-      <p class="menu-hint">اختَر القسم من الشريط التالي، ويمكنك السحب يمينًا ويسارًا على الجوال للوصول السريع لكل الأصناف.</p>
+      <p class="menu-hint"></p>
       <div class="tabs" id="tabs">
         <button class="tab active" data-tab="arabic">قهوة عربية وتركية <span class="tab-count">0</span></button>
         <button class="tab" data-tab="espresso">إسبريسو ومشروبات ساخنة <span class="tab-count">0</span></button>
